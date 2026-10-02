@@ -1,121 +1,152 @@
 /**
- * MOUNTAIN TRAVELS - Interactive Logic & Booking Engine
+ * MOUNTAIN TRAVELS - Interactive Logic & Booking Engine with Firebase Phone OTP
  */
+
+// ================= 1. FIREBASE CONFIGURATION =================
+// Replace these values with your configuration from Firebase Console:
+// Project Settings > General > Your Apps > Web App (</>)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
 
 // Application State
 const appState = {
   isVerified: false,
   verifiedUser: null,
-  selectedVehicle: 'Toyota Innova HyCross Luxury',
-  pendingOtpUserId: null
+  selectedVehicleFull: 'Toyota Innova HyCross Luxury',
+  selectedVehicleShort: 'Innova',
+  confirmationResult: null
 };
 
-// ================= NAVIGATION & SCROLL EFFECT =================
-window.addEventListener('scroll', () => {
-  const topNav = document.getElementById('topNav');
-  if (window.scrollY > 40) {
-    topNav.classList.add('scrolled');
-  } else {
-    topNav.classList.remove('scrolled');
-  }
-});
-
-// Set default travel date to tomorrow on load
+// ================= 2. INITIALIZATION & LIFECYCLE =================
 document.addEventListener('DOMContentLoaded', () => {
-  const dateInput = document.getElementById('resDate');
-  if (dateInput) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    dateInput.value = tomorrow.toISOString().split('T')[0];
-    dateInput.min = new Date().toISOString().split('T')[0];
+  // Autoplay hero background video fallback
+  const bgVideo = document.querySelector('.hero-bg-video');
+  if (bgVideo) {
+    bgVideo.muted = true;
+    const playPromise = bgVideo.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        console.log("Autoplay waiting for first user click.");
+      });
+    }
   }
 
-  // Keyboard accessibility for interactive vehicle cards
-  const cards = document.querySelectorAll('.vehicle-choice-card');
-  cards.forEach(card => {
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        card.click();
+  // Populate date pickers with tomorrow as default
+  const dateInput = document.getElementById('resDate');
+  const modDateInput = document.getElementById('modNewDate');
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const todayStr = today.toISOString().split('T')[0];
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+  if (dateInput) {
+    dateInput.min = todayStr;
+    dateInput.value = tomorrowStr;
+  }
+  if (modDateInput) {
+    modDateInput.min = todayStr;
+  }
+
+  // Scroll header styling
+  window.addEventListener('scroll', () => {
+    const topNav = document.getElementById('topNav');
+    if (topNav) {
+      if (window.scrollY > 40) {
+        topNav.classList.add('scrolled');
+      } else {
+        topNav.classList.remove('scrolled');
       }
-    });
+    }
   });
 
-  updateTripDisplay();
+  updateSummaryRoute();
   runWeatherCalculation();
+  initRecaptcha();
 });
 
-// ================= VEHICLE SELECTION ENGINE =================
-/**
- * Handles selecting a vehicle card directly inside the Reservation engine
- */
-function chooseVehicle(vehicleName, cardElement) {
-  // 1. Remove active status from all selection cards
-  const allCards = document.querySelectorAll('.vehicle-choice-card');
-  allCards.forEach(card => card.classList.remove('active'));
+// ================= 3. FIREBASE RECAPTCHA VERIFIER =================
+function initRecaptcha() {
+  if (!window.recaptchaVerifier) {
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      size: 'invisible',
+      callback: () => {
+        // reCAPTCHA solved automatically
+      },
+      'expired-callback': () => {
+        if (window.recaptchaVerifier) {
+          window.recaptchaVerifier.clear();
+          window.recaptchaVerifier = null;
+        }
+      }
+    });
+  }
+}
 
-  // 2. Set active status on chosen card
-  if (cardElement) {
-    cardElement.classList.add('active');
+// ================= 4. VEHICLE SELECTION ENGINE =================
+function pickVehicle(cardId, fullTitle, shortTitle) {
+  const cards = document.querySelectorAll('.vehicle-choice-card');
+  cards.forEach(card => card.classList.remove('active'));
+
+  const target = document.getElementById(cardId);
+  if (target) {
+    target.classList.add('active');
   }
 
-  // 3. Update hidden input and internal state
-  appState.selectedVehicle = vehicleName;
-  const hiddenInput = document.getElementById('selectedVehicle');
+  appState.selectedVehicleFull = fullTitle;
+  appState.selectedVehicleShort = shortTitle;
+
+  const hiddenInput = document.getElementById('selectedVehicleInput');
   if (hiddenInput) {
-    hiddenInput.value = vehicleName;
+    hiddenInput.value = fullTitle;
   }
 
-  // 4. Update the vehicle item in Dispatch Summary
   const vehicleDisplay = document.getElementById('resVehicleDisplay');
   if (vehicleDisplay) {
-    vehicleDisplay.textContent = vehicleName;
+    vehicleDisplay.textContent = fullTitle;
   }
 
-  updateTripDisplay();
+  updateSummaryRoute();
+
+  const reserveSection = document.getElementById('reserve');
+  if (reserveSection && window.location.hash !== '#reserve') {
+    reserveSection.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
-/**
- * Handles clicks from "Select" buttons in the Nilgiris Fleet section
- */
-function selectVehicleByClass(vehicleClass) {
-  const vehicleMap = {
-    'urbania': { id: 'card-urbania', name: 'Tempo Traveller (12/14 Seater)' },
-    'hycross': { id: 'card-hycross', name: 'Toyota Innova HyCross Luxury' },
-    'fortuner': { id: 'card-fortuner', name: 'Toyota Fortuner 4x4 Highland Edition' },
-    'sedan': { id: 'card-sedan', name: 'Executive Sedan (Dzire / Etios)' }
-  };
-
-  const choice = vehicleMap[vehicleClass];
-  if (!choice) return;
-
-  const cardElement = document.getElementById(choice.id);
-  chooseVehicle(choice.name, cardElement);
-}
-
-/**
- * Updates the live Route & Vehicle headline in Dispatch Summary
- */
-function updateTripDisplay() {
+function updateSummaryRoute() {
   const circuitSelect = document.getElementById('resCircuit');
   const routeDisplay = document.getElementById('resRouteDisplay');
 
   if (circuitSelect && routeDisplay) {
-    const circuitShort = circuitSelect.value.split(' ')[0] + ' ' + (circuitSelect.value.split(' ')[1] || '');
-    const vehicleShort = appState.selectedVehicle.replace('Toyota ', '').replace('Executive ', '');
-    routeDisplay.textContent = `${circuitShort} • ${vehicleShort}`;
+    const circuitVal = circuitSelect.value;
+    const circuitShort = circuitVal.split(' ')[0] + ' ' + (circuitVal.split(' ')[1] || '');
+    routeDisplay.textContent = circuitShort + ' • ' + appState.selectedVehicleShort;
   }
 }
 
-// ================= PLACES TAB FILTERING & DESTINATION PRE-SELECT =================
+// ================= 5. PLACES FILTER & DESTINATION SELECTION =================
 function filterPlaces(category, buttonEl) {
   const tabButtons = document.querySelectorAll('.places-tabs .tab-btn');
   tabButtons.forEach(btn => btn.classList.remove('active'));
   buttonEl.classList.add('active');
 
-  const cards = document.querySelectorAll('#placesContainer .place-card');
-  cards.forEach(card => {
-    if (category === 'all' || card.dataset.category === category) {
+  const placeCards = document.querySelectorAll('#placesContainer .place-card');
+  placeCards.forEach(card => {
+    if (category === 'all' || card.getAttribute('data-category') === category) {
       card.style.display = 'flex';
     } else {
       card.style.display = 'none';
@@ -123,11 +154,9 @@ function filterPlaces(category, buttonEl) {
   });
 }
 
-function selectDestinationAndBook(circuitName, mapQuery) {
-  // Open place on Google Maps in background tab
-  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`, '_blank');
+function selectDestinationAndBook(circuitName, queryMap) {
+  window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(queryMap), '_blank');
 
-  // Set the circuit dropdown
   const circuitSelect = document.getElementById('resCircuit');
   if (circuitSelect) {
     for (let i = 0; i < circuitSelect.options.length; i++) {
@@ -138,28 +167,27 @@ function selectDestinationAndBook(circuitName, mapQuery) {
     }
   }
 
-  updateTripDisplay();
+  updateSummaryRoute();
 
-  // Smooth scroll to reserve engine
   const reserveSection = document.getElementById('reserve');
   if (reserveSection) {
     reserveSection.scrollIntoView({ behavior: 'smooth' });
   }
 }
 
-// ================= WEATHER CALCULATOR MODULE =================
+// ================= 6. WEATHER FORECAST MODULE =================
 function runWeatherCalculation() {
   const destination = document.getElementById('wcalcDest').value;
   const time = document.getElementById('wcalcTime').value;
 
   const tempDisplay = document.getElementById('wcalcTemp');
-  const conditionDisplay = document.getElementById('wcalcCondition');
-  const safetyDisplay = document.getElementById('wcalcSafety');
+  const condDisplay = document.getElementById('wcalcCondition');
+  const safeDisplay = document.getElementById('wcalcSafety');
   const mistDisplay = document.getElementById('wcalcMist');
   const roadDisplay = document.getElementById('wcalcRoad');
   const attireDisplay = document.getElementById('wcalcAttire');
 
-  const forecasts = {
+  const table = {
     'ooty_doddabetta': {
       morning: { temp: '11°C', cond: 'Dense Shola Mist', safe: '94%', mist: 'Fog banks (Vis: 4 km)', road: 'Damp Hairpins', attire: 'Fleece / Windcheater' },
       afternoon: { temp: '16°C', cond: 'Crisp Sun & Gentle Breeze', safe: '99%', mist: 'Clear Sight (Vis: 12 km)', road: 'Dry & Optimal', attire: 'Light Cardigan' },
@@ -182,26 +210,30 @@ function runWeatherCalculation() {
     }
   };
 
-  const outcome = forecasts[destination][time];
-  tempDisplay.textContent = outcome.temp;
-  conditionDisplay.textContent = outcome.cond;
-  safetyDisplay.textContent = `Safety: ${outcome.safe}`;
-  mistDisplay.textContent = outcome.mist;
-  roadDisplay.textContent = outcome.road;
-  attireDisplay.textContent = outcome.attire;
+  const data = table[destination][time];
+  tempDisplay.textContent = data.temp;
+  condDisplay.textContent = data.cond;
+  safeDisplay.textContent = 'Safety: ' + data.safe;
+  mistDisplay.textContent = data.mist;
+  roadDisplay.textContent = data.road;
+  attireDisplay.textContent = data.attire;
 }
 
-// ================= MODAL & VERIFICATION FLOW =================
+// ================= 7. MODALS & FIREBASE PHONE AUTH =================
 function openAuthModal(e) {
   if (e) e.preventDefault();
   const modal = document.getElementById('authModal');
-  modal.classList.add('show');
+  if (modal) modal.classList.add('show');
 }
 
 function closeAuthModal() {
-  document.getElementById('authModal').classList.remove('show');
+  const modal = document.getElementById('authModal');
+  if (modal) modal.classList.remove('show');
 }
 
+/**
+ * Triggers real SMS OTP through Firebase
+ */
 function sendRealPhoneOtp() {
   const phoneInput = document.getElementById('modalPhoneInput').value.trim();
   const nameInput = document.getElementById('modalNameInput').value.trim();
@@ -211,22 +243,53 @@ function sendRealPhoneOtp() {
     return;
   }
 
-  // Switch to OTP entry step
-  document.getElementById('displayOtpTargetPhone').textContent = phoneInput;
-  document.getElementById('authStepPhone').style.display = 'none';
-  document.getElementById('authStepOtp').style.display = 'block';
+  // Format to E.164 (+91 for India)
+  const fullPhoneNumber = '+91' + phoneInput;
 
-  // Automatically sync to booking form fields
-  const resPhone = document.getElementById('resPhone');
-  const resName = document.getElementById('resName');
-  if (resPhone) resPhone.value = phoneInput;
-  if (resName && nameInput) resName.value = nameInput;
+  initRecaptcha();
+  const appVerifier = window.recaptchaVerifier;
+  const sendBtn = document.getElementById('sendOtpBtn');
 
-  // Auto focus first OTP digit
-  setTimeout(() => {
-    const firstDigit = document.getElementById('otp1');
-    if (firstDigit) firstDigit.focus();
-  }, 150);
+  if (sendBtn) {
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending SMS...';
+  }
+
+  auth.signInWithPhoneNumber(fullPhoneNumber, appVerifier)
+    .then((confirmationResult) => {
+      appState.confirmationResult = confirmationResult;
+
+      // Sync entered info to the reservation form
+      const resPhone = document.getElementById('resPhone');
+      const resName = document.getElementById('resName');
+      if (resPhone) resPhone.value = phoneInput;
+      if (resName && nameInput) resName.value = nameInput;
+
+      // Switch view to OTP step
+      document.getElementById('displayOtpTargetPhone').textContent = phoneInput;
+      document.getElementById('authStepPhone').style.display = 'none';
+      document.getElementById('authStepOtp').style.display = 'block';
+
+      setTimeout(() => {
+        const firstDigit = document.getElementById('otp1');
+        if (firstDigit) firstDigit.focus();
+      }, 100);
+    })
+    .catch((error) => {
+      console.error("SMS dispatch error:", error);
+      alert('Error sending SMS: ' + error.message);
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.render().then((widgetId) => {
+          if (window.grecaptcha) grecaptcha.reset(widgetId);
+        });
+      }
+    })
+    .finally(() => {
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send OTP Code';
+      }
+    });
 }
 
 function focusNextDigit(current, nextId) {
@@ -235,65 +298,97 @@ function focusNextDigit(current, nextId) {
   }
 }
 
-function validateOtpInputs() {
+/**
+ * Validates the entered 6-digit code against Firebase
+ */
+function verifyRealPhoneOtp() {
   let code = '';
   for (let i = 1; i <= 6; i++) {
-    code += document.getElementById(`otp${i}`).value;
+    const digitInput = document.getElementById('otp' + i);
+    if (digitInput) code += digitInput.value.trim();
   }
-  return code;
-}
 
-function verifyRealPhoneOtp() {
-  const code = validateOtpInputs();
-  if (code.length < 4) {
-    alert('Please enter the full verification code.');
+  if (code.length !== 6) {
+    alert('Please enter the full 6-digit verification code sent to your phone.');
     return;
   }
 
-  // Verification Success
-  appState.isVerified = true;
-  appState.verifiedUser = document.getElementById('modalPhoneInput').value;
-
-  // Update Navigation Badge
-  const navBadge = document.getElementById('navAuthBadge');
-  if (navBadge) {
-    navBadge.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#22c55e;"></i> <span>+91 ${appState.verifiedUser}</span>`;
+  if (!appState.confirmationResult) {
+    alert('OTP session expired. Please request a new code.');
+    resetOtpStep();
+    return;
   }
 
-  // Update Alert Banner in Reservation Box
-  const alertBanner = document.getElementById('authAlertBanner');
-  if (alertBanner) {
-    alertBanner.style.background = '#f0fdf4';
-    alertBanner.style.borderColor = '#bbf7d0';
-    alertBanner.style.color = '#15803d';
-    document.getElementById('authAlertText').innerHTML = `<strong>Mobile Verified:</strong> +91 ${appState.verifiedUser} (20% Discount Guaranteed)`;
-    document.getElementById('authAlertBtn').style.display = 'none';
+  const verifyBtn = document.getElementById('verifyOtpBtn');
+  if (verifyBtn) {
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
   }
 
-  // Update Summary Ticket
-  const statusDisplay = document.getElementById('ticketAuthStatus');
-  if (statusDisplay) {
-    statusDisplay.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#22c55e;"></i> Verified (+91 ${appState.verifiedUser})`;
-  }
+  appState.confirmationResult.confirm(code)
+    .then((result) => {
+      const user = result.user;
+      console.log("Firebase user verified successfully:", user);
 
-  closeAuthModal();
-  alert('Mobile verification successful! 20% discount has been applied to your booking.');
+      appState.isVerified = true;
+      appState.verifiedUser = document.getElementById('modalPhoneInput').value.trim();
+
+      // Update Navigation Header Badge
+      const navBadge = document.getElementById('navAuthBadge');
+      if (navBadge) {
+        navBadge.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#22c55e;"></i> <span>+91 ' + appState.verifiedUser + '</span>';
+      }
+
+      // Update Alert Banner inside Reservation form
+      const alertBanner = document.getElementById('authAlertBanner');
+      if (alertBanner) {
+        alertBanner.style.background = '#f0fdf4';
+        alertBanner.style.borderColor = '#bbf7d0';
+        alertBanner.style.color = '#15803d';
+        document.getElementById('authAlertText').innerHTML = '<strong>Verified:</strong> +91 ' + appState.verifiedUser + ' (20% Discount Activated)';
+        const alertBtn = document.getElementById('authAlertBtn');
+        if (alertBtn) alertBtn.style.display = 'none';
+      }
+
+      // Update summary dispatch status
+      const ticketStatus = document.getElementById('ticketAuthStatus');
+      if (ticketStatus) {
+        ticketStatus.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#22c55e;"></i> Verified (+91 ' + appState.verifiedUser + ')';
+      }
+
+      closeAuthModal();
+      alert('Verification successful! 20% discount confirmed on your ride.');
+    })
+    .catch((error) => {
+      console.error("Verification failed:", error);
+      alert('Invalid or expired verification code. Please check and try again.');
+    })
+    .finally(() => {
+      if (verifyBtn) {
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Verify & Activate Account';
+      }
+    });
 }
 
 function resetOtpStep() {
   document.getElementById('authStepOtp').style.display = 'none';
   document.getElementById('authStepPhone').style.display = 'block';
+  for (let i = 1; i <= 6; i++) {
+    const d = document.getElementById('otp' + i);
+    if (d) d.value = '';
+  }
 }
 
-// ================= BOOKING SUBMISSION VIA WHATSAPP =================
-function attemptBookingSubmission() {
+// ================= 8. WHATSAPP BOOKING SUBMISSION =================
+function submitBookingToWhatsApp() {
   const name = document.getElementById('resName').value.trim();
   const phone = document.getElementById('resPhone').value.trim();
   const circuit = document.getElementById('resCircuit').value;
   const pickup = document.getElementById('resPickup').value;
   const date = document.getElementById('resDate').value;
   const passengers = document.getElementById('resPassengers').value;
-  const vehicle = appState.selectedVehicle;
+  const vehicle = appState.selectedVehicleFull;
 
   if (!name) {
     alert('Please enter your full name.');
@@ -308,57 +403,58 @@ function attemptBookingSubmission() {
   }
 
   if (!date) {
-    alert('Please pick your travel date.');
+    alert('Please choose your travel date.');
     document.getElementById('resDate').focus();
     return;
   }
 
-  // Prepare dispatch message
-  const textMessage = 
-    `*NEW LUXURY NILGIRIS RESERVATION (20% OFF)*\n` +
-    `---------------------------------------\n` +
-    `• *Guest Name:* ${name}\n` +
-    `• *Mobile:* +91 ${phone}\n` +
-    `• *Vehicle:* ${vehicle}\n` +
-    `• *Circuit:* ${circuit}\n` +
-    `• *Pickup Hub:* ${pickup}\n` +
-    `• *Travel Date:* ${date}\n` +
-    `• *Passengers:* ${passengers}\n` +
-    `• *Discount Status:* Flat 20% Applied\n` +
-    `---------------------------------------\n` +
-    `Please confirm vehicle dispatch & chauffeur details.`;
+  const authNote = appState.isVerified ? "Verified via OTP (20% Discount Applied)" : "Unverified (Standard Rate)";
 
-  const waUrl = `https://wa.me/919360543120?text=${encodeURIComponent(textMessage)}`;
-  window.open(waUrl, '_blank');
+  const textMessage = 
+    '*NEW LUXURY NILGIRIS RESERVATION*\n' +
+    '---------------------------------------\n' +
+    '• *Guest Name:* ' + name + '\n' +
+    '• *Contact Phone:* +91 ' + phone + '\n' +
+    '• *Status:* ' + authNote + '\n' +
+    '• *Selected Vehicle:* ' + vehicle + '\n' +
+    '• *Circuit:* ' + circuit + '\n' +
+    '• *Pickup Hub:* ' + pickup + '\n' +
+    '• *Date of Travel:* ' + date + '\n' +
+    '• *Passengers:* ' + passengers + '\n' +
+    '---------------------------------------\n' +
+    'Please confirm availability and dispatch chauffeur details.';
+
+  window.open('https://wa.me/919360543120?text=' + encodeURIComponent(textMessage), '_blank');
 }
 
-// ================= TRIP MODIFICATION MODAL =================
+// ================= 9. TRIP MODIFICATION MODAL =================
 let currentTripAction = 'postpone';
 
-function openTripModifyModal(actionType) {
-  currentTripAction = actionType;
+function openTripModifyModal(type) {
+  currentTripAction = type;
   const modal = document.getElementById('tripModifyModal');
   const heading = document.getElementById('tripModifyHeading');
   const icon = document.getElementById('tripModifyIcon');
-  const dateGroup = document.getElementById('groupNewDate');
+  const dateField = document.getElementById('groupNewDate');
 
-  if (actionType === 'cancel') {
+  if (type === 'cancel') {
     heading.textContent = 'Cancel Existing Trip';
     icon.className = 'fa-solid fa-calendar-xmark';
     icon.style.color = '#ef4444';
-    dateGroup.style.display = 'none';
+    dateField.style.display = 'none';
   } else {
     heading.textContent = 'Postpone Trip';
     icon.className = 'fa-solid fa-calendar-plus';
     icon.style.color = 'var(--sunlight-yellow)';
-    dateGroup.style.display = 'flex';
+    dateField.style.display = 'flex';
   }
 
-  modal.classList.add('show');
+  if (modal) modal.classList.add('show');
 }
 
 function closeTripModifyModal() {
-  document.getElementById('tripModifyModal').classList.remove('show');
+  const modal = document.getElementById('tripModifyModal');
+  if (modal) modal.classList.remove('show');
 }
 
 function submitTripModification() {
@@ -371,66 +467,24 @@ function submitTripModification() {
     return;
   }
 
-  let message = '';
+  let msg = '';
   if (currentTripAction === 'postpone') {
     if (!newDate) {
       alert('Please select your new requested travel date.');
       return;
     }
-    message = `*TRIP POSTPONE REQUEST*\nMobile: +91 ${phone}\nRequested Date: ${newDate}\nReason: ${reason}`;
+    msg = '*TRIP POSTPONE REQUEST*\nMobile: +91 ' + phone + '\nNew Travel Date: ' + newDate + '\nReason: ' + reason;
   } else {
-    message = `*TRIP CANCELLATION REQUEST*\nMobile: +91 ${phone}\nReason: ${reason}`;
+    msg = '*TRIP CANCELLATION REQUEST*\nMobile: +91 ' + phone + '\nReason: ' + reason;
   }
 
-  window.open(`https://wa.me/919360543120?text=${encodeURIComponent(message)}`, '_blank');
+  window.open('https://wa.me/919360543120?text=' + encodeURIComponent(msg), '_blank');
   closeTripModifyModal();
 }
 
-// ================= ADMIN PHOTO UPLOADER =================
-function promptAdminImageUpload() {
-  document.getElementById('adminUploadModal').classList.add('show');
-  previewSelectedTargetImage();
-}
-
-function closeAdminUploadModal() {
-  document.getElementById('adminUploadModal').classList.remove('show');
-}
-
-function previewSelectedTargetImage() {
-  const targetId = document.getElementById('uploadTargetKey').value;
-  const currentImg = document.getElementById(targetId);
-  if (currentImg) {
-    document.getElementById('uploadLivePreview').src = currentImg.src;
-  }
-}
-
-function handleLocalFileSelect(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      document.getElementById('uploadLivePreview').src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function handleImageUploadSubmit(event) {
-  event.preventDefault();
-  const targetId = document.getElementById('uploadTargetKey').value;
-  const newSrc = document.getElementById('uploadLivePreview').src;
-
-  const targetImageElement = document.getElementById(targetId);
-  if (targetImageElement) {
-    targetImageElement.src = newSrc;
-    alert('Photo updated successfully!');
-    closeAdminUploadModal();
-  }
-}
-
-// Close modals when clicking backdrop
-window.onclick = function(event) {
-  if (event.target.classList.contains('sheet-backdrop')) {
-    event.target.classList.remove('show');
+// Close modals when clicking the dim background
+window.onclick = function (e) {
+  if (e.target && e.target.classList.contains('sheet-backdrop')) {
+    e.target.classList.remove('show');
   }
 };
