@@ -207,7 +207,7 @@
       color: var(--forest-dark);
     }
 
-    /* HERO SECTION */
+    /* HERO SECTION WITH VIDEO BACKGROUND */
     .hero {
       position: relative;
       min-height: 85vh;
@@ -229,13 +229,24 @@
       }
     }
 
+    .hero-bg-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      pointer-events: none;
+    }
+
     .hero-video-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, rgba(13, 34, 21, 0.6) 0%, rgba(13, 34, 21, 0.85) 60%, rgba(13, 34, 21, 0.98) 100%);
+      background: linear-gradient(180deg, rgba(13, 34, 21, 0.45) 0%, rgba(13, 34, 21, 0.68) 60%, rgba(13, 34, 21, 0.94) 100%);
       z-index: 1;
       pointer-events: none;
     }
@@ -1091,7 +1102,6 @@
       }
     }
 
-    /* Neutralize inner element events so card captures click */
     .vehicle-choice-card * {
       pointer-events: none !important;
     }
@@ -1496,8 +1506,14 @@
     </div>
   </header>
 
-  <!-- HERO SECTION -->
+  <!-- HERO SECTION WITH VIDEO BACKGROUND -->
   <section class="hero" id="home">
+    <!-- Background Video[cite: 3] -->
+    <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
+      <source src="webvid.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
     <div class="hero-video-overlay"></div>
 
     <div class="hero-content-inner">
@@ -2009,7 +2025,7 @@
               </div>
             </div>
 
-            <!-- TACTILE VEHICLE SELECTION CARDS -->
+            <!-- TACTILE VEHICLE SELECTION CARDS[cite: 1] -->
             <div class="form-group">
               <label class="form-label">Select Vehicle</label>
               
@@ -2028,7 +2044,7 @@
                   </div>
                 </div>
 
-                <!-- Innova (Active by Default) -->
+                <!-- Innova (Active by Default)[cite: 1] -->
                 <div class="vehicle-choice-card active" 
                      id="card-innova" 
                      onclick="pickVehicle('card-innova', 'Toyota Innova HyCross Luxury', 'Innova')">
@@ -2293,7 +2309,6 @@
 
   <!-- JAVASCRIPT CONTROLLERS -->
   <script>
-    // Global Application State
     var appState = {
       isVerified: false,
       verifiedUser: null,
@@ -2301,9 +2316,20 @@
       selectedVehicleShort: 'Innova'
     };
 
-    // DOM Ready Initialization
     document.addEventListener('DOMContentLoaded', function () {
-      // 1. Initialize Date Defaults (min: today, default: tomorrow)
+      // 1. Force Video Autoplay Fallback[cite: 3]
+      var bgVideo = document.querySelector('.hero-bg-video');
+      if (bgVideo) {
+        bgVideo.muted = true;
+        var playPromise = bgVideo.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function () {
+            console.log("Autoplay delayed until user interaction.");
+          });
+        }
+      }
+
+      // 2. Set default dates
       var dateInput = document.getElementById('resDate');
       var modDateInput = document.getElementById('modNewDate');
       var today = new Date();
@@ -2321,7 +2347,7 @@
         modDateInput.min = todayStr;
       }
 
-      // 2. Window Scroll Listener
+      // 3. Navbar scroll listener
       window.addEventListener('scroll', function () {
         var topNav = document.getElementById('topNav');
         if (topNav) {
@@ -2333,28 +2359,24 @@
         }
       });
 
-      // 3. Initial Display Run
       updateSummaryRoute();
       runWeatherCalculation();
     });
 
     /**
-     * Vehicle Card Selection Engine
+     * Vehicle Selection Engine[cite: 1]
      */
     function pickVehicle(cardId, fullTitle, shortTitle) {
-      // Clear active class from all choice cards
       var cards = document.querySelectorAll('.vehicle-choice-card');
       cards.forEach(function (card) {
         card.classList.remove('active');
       });
 
-      // Activate clicked choice card
       var target = document.getElementById(cardId);
       if (target) {
         target.classList.add('active');
       }
 
-      // Update state & hidden form input
       appState.selectedVehicleFull = fullTitle;
       appState.selectedVehicleShort = shortTitle;
 
@@ -2363,25 +2385,19 @@
         hiddenInput.value = fullTitle;
       }
 
-      // Update vehicle label in summary box
       var vehicleDisplay = document.getElementById('resVehicleDisplay');
       if (vehicleDisplay) {
         vehicleDisplay.textContent = fullTitle;
       }
 
-      // Update headline route preview in summary box
       updateSummaryRoute();
 
-      // Scroll to reserve section if invoked from outside
       var reserveSection = document.getElementById('reserve');
       if (reserveSection && window.location.hash !== '#reserve') {
         reserveSection.scrollIntoView({ behavior: 'smooth' });
       }
     }
 
-    /**
-     * Route & Summary Synchronizer
-     */
     function updateSummaryRoute() {
       var circuitSelect = document.getElementById('resCircuit');
       var routeDisplay = document.getElementById('resRouteDisplay');
@@ -2393,9 +2409,6 @@
       }
     }
 
-    /**
-     * Places Filter Tabs
-     */
     function filterPlaces(category, buttonEl) {
       var tabButtons = document.querySelectorAll('.places-tabs .tab-btn');
       tabButtons.forEach(function (btn) {
@@ -2413,9 +2426,6 @@
       });
     }
 
-    /**
-     * Destination Shortcut Selection
-     */
     function selectDestinationAndBook(circuitName, queryMap) {
       window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(queryMap), '_blank');
 
@@ -2437,9 +2447,6 @@
       }
     }
 
-    /**
-     * Weather Calculator Engine
-     */
     function runWeatherCalculation() {
       var destination = document.getElementById('wcalcDest').value;
       var time = document.getElementById('wcalcTime').value;
@@ -2483,9 +2490,6 @@
       attireDisplay.textContent = data.attire;
     }
 
-    /**
-     * Auth Modals & Verification Handlers
-     */
     function openAuthModal(e) {
       if (e) e.preventDefault();
       var modal = document.getElementById('authModal');
@@ -2569,9 +2573,6 @@
       document.getElementById('authStepPhone').style.display = 'block';
     }
 
-    /**
-     * Dispatch WhatsApp Booking Submission
-     */
     function submitBookingToWhatsApp() {
       var name = document.getElementById('resName').value.trim();
       var phone = document.getElementById('resPhone').value.trim();
@@ -2616,9 +2617,6 @@
       window.open('https://wa.me/919360543120?text=' + encodeURIComponent(textMessage), '_blank');
     }
 
-    /**
-     * Trip Modification Engine
-     */
     var currentTripAction = 'postpone';
 
     function openTripModifyModal(type) {
@@ -2673,7 +2671,6 @@
       closeTripModifyModal();
     }
 
-    // Modal dismiss on backdrop click
     window.onclick = function (e) {
       if (e.target && e.target.classList.contains('sheet-backdrop')) {
         e.target.classList.remove('show');
