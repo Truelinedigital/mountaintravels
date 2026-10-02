@@ -45,7 +45,6 @@
       flex-direction: column;
     }
 
-    /* Passcode Gate */
     #loginGate {
       position: fixed;
       inset: 0;
@@ -118,7 +117,6 @@
       background: #166534;
     }
 
-    /* Top Bar */
     .admin-navbar {
       height: 64px;
       background: var(--forest-dark);
@@ -172,7 +170,6 @@
       flex: 1;
     }
 
-    /* KPI Metrics */
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -216,7 +213,6 @@
       font-size: 1.25rem;
     }
 
-    /* Panels */
     .dashboard-panel {
       background: #fff;
       border-radius: var(--radius-lg);
@@ -246,7 +242,6 @@
       gap: 0.5rem;
     }
 
-    /* Table Filter Controls */
     .table-controls {
       display: flex;
       gap: 0.6rem;
@@ -346,11 +341,6 @@
       border: none;
     }
 
-    .icon-btn.wa:hover {
-      background: #1eb956;
-    }
-
-    /* Driver & Vehicle Dispatch Row */
     .dispatch-split {
       display: grid;
       grid-template-columns: 1fr;
@@ -388,7 +378,6 @@
       font-size: 0.9rem;
     }
 
-    /* Photo Upload Grid */
     .photo-manager-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -451,7 +440,7 @@
       <button class="btn-sm-action" onclick="exportDispatchCSV()">
         <i class="fa-solid fa-file-csv"></i> Export Roster
       </button>
-      <a href="mount.html" class="btn-sm-action" target="_blank">
+      <a href="index.html" class="btn-sm-action" target="_blank">
         <i class="fa-solid fa-up-right-from-square"></i> Live Website
       </a>
       <button class="btn-sm-action" onclick="adminLogout()">
@@ -533,7 +522,7 @@
             </tr>
           </thead>
           <tbody id="bookingsTableBody">
-            <!-- Populated dynamically via JavaScript -->
+            <!-- Rendered dynamically -->
           </tbody>
         </table>
       </div>
@@ -541,7 +530,6 @@
 
     <!-- Split Operations Section: Postpone/Cancel Queue & Chauffeur Allocation -->
     <div class="dispatch-split">
-      <!-- 1. Postpone & Cancel Modification Queue -->
       <div class="dashboard-panel">
         <div class="panel-header">
           <h3><i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--forest-green)"></i> Trip Modification Requests</h3>
@@ -565,7 +553,6 @@
         </div>
       </div>
 
-      <!-- 2. Certified Hill Chauffeurs & Fleet Assignment -->
       <div class="dashboard-panel">
         <div class="panel-header">
           <h3><i class="fa-solid fa-steering-wheel" style="color:var(--forest-green)"></i> Certified Hill Chauffeurs</h3>
@@ -617,28 +604,24 @@
       </div>
 
       <div class="photo-manager-grid">
-        <!-- Doddabetta -->
         <div class="photo-slot-card">
           <div class="slot-meta">Doddabetta Peak Banner</div>
           <div class="slot-thumb"><img id="preview-doddabetta" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
           <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-place-doddabetta', 'preview-doddabetta', event)">
         </div>
 
-        <!-- Pykara -->
         <div class="photo-slot-card">
           <div class="slot-meta">Pykara Falls & Lake</div>
           <div class="slot-thumb"><img id="preview-pykara" src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
           <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-place-pykara', 'preview-pykara', event)">
         </div>
 
-        <!-- Innova HyCross -->
         <div class="photo-slot-card">
           <div class="slot-meta">Innova HyCross Luxury</div>
           <div class="slot-thumb"><img id="preview-hycross" src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
           <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-veh-hycross', 'preview-hycross', event)">
         </div>
 
-        <!-- Tempo Traveller -->
         <div class="photo-slot-card">
           <div class="slot-meta">Tempo Traveller (12/14)</div>
           <div class="slot-thumb"><img id="preview-urbania" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
@@ -650,7 +633,6 @@
 
   <!-- ================= JAVASCRIPT OPERATIONS ================= -->
   <script>
-    // 1. Passcode Authentication
     function authenticateAdmin() {
       const pass = document.getElementById('adminPassInput').value;
       if (pass === 'admin123') {
@@ -674,7 +656,6 @@
       window.location.reload();
     }
 
-    // 2. Fetch Stored Bookings
     function getStoredBookings() {
       let customBookings = JSON.parse(localStorage.getItem('mt_all_bookings') || '[]');
       const latestSession = JSON.parse(sessionStorage.getItem('currentBooking') || 'null');
@@ -731,7 +712,6 @@
       return customBookings;
     }
 
-    // 3. Render Bookings Table
     function refreshBookingsTable() {
       const bookings = getStoredBookings();
       const tbody = document.getElementById('bookingsTableBody');
@@ -818,7 +798,6 @@
       }
     }
 
-    // 4. Postpone & Cancel Request Queue
     function renderModificationsQueue() {
       const queueBody = document.getElementById('modificationsQueueBody');
       queueBody.innerHTML = `
@@ -841,7 +820,6 @@
       window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
     }
 
-    // 5. Search & Filter Table
     function filterBookingsTable() {
       const query = document.getElementById('bookingSearchInput').value.toLowerCase();
       const statusFilter = document.getElementById('statusFilter').value;
@@ -860,7 +838,6 @@
       });
     }
 
-    // 6. CSV Roster Export
     function exportDispatchCSV() {
       const bookings = getStoredBookings();
       let csvContent = "data:text/csv;charset=utf-8,Trip ID,Date,Name,Phone,Circuit,Vehicle,Status,Chauffeur\n";
@@ -878,7 +855,6 @@
       document.body.removeChild(link);
     }
 
-    // 7. Custom Image Replacement System
     function handleAdminPhotoReplace(targetKey, previewImgId, event) {
       const file = event.target.files[0];
       if (!file) return;
