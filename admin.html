@@ -864,16 +864,16 @@
         const base64 = e.target.result;
         document.getElementById(previewImgId).src = base64;
 
-        let customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');
+        let customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');[cite: 1]
         customImages[targetKey] = base64;
-        localStorage.setItem('mt_custom_images', JSON.stringify(customImages));
+        localStorage.setItem('mt_custom_images', JSON.stringify(customImages));[cite: 1]
         alert('Image updated! It will reflect automatically across all customer devices.');
       };
       reader.readAsDataURL(file);
     }
 
     function syncExistingImages() {
-      const customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');
+      const customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');[cite: 1]
       if (customImages['img-place-doddabetta']) document.getElementById('preview-doddabetta').src = customImages['img-place-doddabetta'];
       if (customImages['img-place-pykara']) document.getElementById('preview-pykara').src = customImages['img-place-pykara'];
       if (customImages['img-veh-hycross']) document.getElementById('preview-hycross').src = customImages['img-veh-hycross'];
