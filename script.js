@@ -47,22 +47,23 @@ const weatherData = {
    ======================================================== */
 function openAuthModal(e) {
   if (e && e.preventDefault) e.preventDefault();
+  if (e && e.stopPropagation) e.stopPropagation();
 
   const modal = document.getElementById('authModal');
   if (!modal) {
-    console.error("Modal #authModal not found in DOM");
+    alert("Modal element not found in DOM");
     return;
   }
 
   resetOtpStep();
-  modal.style.display = 'flex';
+  modal.style.setProperty('display', 'flex', 'important');
   modal.classList.add('show');
 }
 
 function closeAuthModal() {
   const modal = document.getElementById('authModal');
   if (modal) {
-    modal.style.display = 'none';
+    modal.style.setProperty('display', 'none', 'important');
     modal.classList.remove('show');
   }
 }
@@ -103,7 +104,7 @@ function sendRealPhoneOtp() {
     sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating OTP...`;
   }
 
-  // Generate fresh, dynamic 6-digit code
+  // Generate fresh, dynamic 6-digit code[cite: 4]
   dynamicCurrentOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
   // Route real verification to WhatsApp without external carrier costs
@@ -214,6 +215,7 @@ function applyUserLogin(user) {
   const navBadge = document.getElementById('navAuthBadge');
   if (navBadge) {
     navBadge.innerHTML = `<i class="fa-solid fa-circle-check" style="color:var(--forest-dark)"></i> <span>+91 ${user.phone.slice(-4)}</span>`;
+    navBadge.setAttribute('onclick', 'handleLogout()');
   }
 
   const alertBanner = document.getElementById('authAlertBanner');
@@ -664,19 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Register Navigation Click Event Listener
-  const navBadge = document.getElementById('navAuthBadge');
-  if (navBadge) {
-    navBadge.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (currentUser && currentUser.phone) {
-        handleLogout();
-      } else {
-        openAuthModal(e);
-      }
-    });
-  }
-
+  // Handle badge state only if a user is verified
   if (currentUser && currentUser.phone) {
     applyUserLogin(currentUser);
   }
