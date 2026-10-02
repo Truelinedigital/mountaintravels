@@ -6,12 +6,12 @@
 // Replace these values with your configuration from Firebase Console:
 // Project Settings > General > Your Apps > Web App (</>)
 const firebaseConfig = {
-  apiKey: "AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456"
+  apiKey: "YOUR_WEB_API_KEY_HERE", // Must start with AIzaSy...
+  authDomain: "mountaintravels-74489.firebaseapp.com",
+  projectId: "mountaintravels-74489",
+  storageBucket: "mountaintravels-74489.appspot.com",
+  messagingSenderId: "524468956734",
+  appId: "1:524468956734:web:9e089d3cc950aa85cdab6f"
 };
 
 // Initialize Firebase
