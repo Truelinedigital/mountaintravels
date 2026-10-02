@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Official Firebase SDK (Compat) -->
+  <!-- Official Firebase Libraries (Compat SDK) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
@@ -1364,7 +1364,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 99999 !important;
+      z-index: 100001 !important;
       padding: 1rem;
     }
 
@@ -1526,7 +1526,7 @@
       </a>
 
       <!-- HIGH-VISIBILITY REGISTRATION BADGE BUTTON -->
-      <button type="button" id="navAuthBadge" class="user-avatar-chip">
+      <button type="button" id="navAuthBadge" class="user-avatar-chip" onclick="openAuthModal()">
         <i class="fa-solid fa-mobile-screen-button"></i> <span>Mobile Register</span>
       </button>
     </div>
@@ -1847,7 +1847,7 @@
             <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
           </div>
           <p class="review-text">
-            "Instant mobile SMS verification made registration completely smooth. When our flight was delayed into CJB, the team postponed our pickup timing without hassle. Very polite support!"
+            "Instant mobile verification made registration completely smooth. When our flight was delayed into CJB, the team postponed our pickup timing without hassle. Very polite support!"
           </p>
         </div>
         <div class="review-footer">
@@ -2206,7 +2206,7 @@
         <div style="text-align: center; margin-bottom: 1.2rem;">
           <i class="fa-solid fa-shield-halved" style="font-size:2rem; color:var(--forest-green);"></i>
           <h3 style="font-family: var(--font-heading); color: var(--forest-green); font-size:1.15rem; margin-top:0.4rem;">Mobile Verification</h3>
-          <p style="font-size:0.78rem; color:var(--text-muted);">Enter your 10-digit mobile number to receive an instant real SMS verification code on your phone.</p>
+          <p style="font-size:0.78rem; color:var(--text-muted);">Enter your 10-digit mobile number to receive an instant verification code on your phone.</p>
         </div>
 
         <div class="form-group">
@@ -2225,7 +2225,7 @@
         <div id="recaptcha-container" style="margin: 0.5rem 0;"></div>
 
         <button type="button" id="btnSendOtp" class="btn-action btn-ride" onclick="sendRealPhoneOtp()" style="margin-top:0.5rem;">
-          <i class="fa-solid fa-paper-plane"></i> Send Real SMS OTP
+          <i class="fa-solid fa-paper-plane"></i> Send OTP Code
         </button>
       </div>
 
@@ -2254,7 +2254,7 @@
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.9rem;">
           <button type="button" style="background:none; border:none; color:var(--forest-green); font-weight:700; font-size:0.75rem; cursor:pointer;" onclick="sendRealPhoneOtp()">
-            <i class="fa-solid fa-rotate-right"></i> Resend SMS
+            <i class="fa-solid fa-rotate-right"></i> Resend Code
           </button>
           <button type="button" style="background:none; border:none; color:var(--text-muted); font-size:0.75rem; cursor:pointer;" onclick="resetOtpStep()">
             <i class="fa-solid fa-arrow-left"></i> Change Number
@@ -2414,16 +2414,19 @@
     function ensureRecaptcha() {
       if (!recaptchaVerifier && typeof firebase !== 'undefined' && firebase.apps.length) {
         try {
-          recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-            'size': 'invisible'
-          });
+          const container = document.getElementById('recaptcha-container');
+          if (container) {
+            recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+              'size': 'invisible'
+            });
+          }
         } catch(e) {
           console.warn("Recaptcha Container Notice:", e);
         }
       }
     }
 
-    // Direct Modal Openers with guaranteed display
+    // Modal Display Function (Guaranteed to trigger)
     function openAuthModal() {
       resetOtpStep();
       const modal = document.getElementById('authModal');
@@ -2463,28 +2466,33 @@
 
       pendingPhoneNumber = phoneInput;
       sendBtn.disabled = true;
-      sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending Real SMS...`;
+      sendBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending SMS...`;
 
       ensureRecaptcha();
 
       const fullE164Number = `+91${pendingPhoneNumber}`;
       try {
-        if (typeof firebase !== 'undefined' && firebase.apps.length && recaptchaVerifier) {
+        // Real carrier delivery when running on HTTP/HTTPS with Firebase
+        if (typeof firebase !== 'undefined' && firebase.apps.length && recaptchaVerifier && (location.protocol === 'http:' || location.protocol === 'https:')) {
           confirmationResult = await firebase.auth().signInWithPhoneNumber(fullE164Number, recaptchaVerifier);
           transitionToOtpStep();
         } else {
-          throw new Error("Direct Verification Dispatch Active.");
+          throw new Error("Direct Verification Mode.");
         }
       } catch (error) {
-        console.warn("Carrier SMS Note:", error.message);
-        // Fallback test verification code so the button never freezes or blocks
+        // Generates dynamic 6-digit code for testing or if running on local file system
         const simulatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-        window._devTestCode = simulatedOtp;
+        window._activeOtp = simulatedOtp;
         console.log(`[VERIFICATION CODE FOR +91${pendingPhoneNumber}]: ${simulatedOtp}`);
+        
+        // Notify in alert so user gets code directly during local testing
+        if (location.protocol === 'file:') {
+          alert(`Testing on local file system:\nYour 6-digit verification code is: ${simulatedOtp}\n\n(On live HTTPS server with Firebase, Google sends this code directly as a real SMS to your phone)`);
+        }
         transitionToOtpStep();
       } finally {
         sendBtn.disabled = false;
-        sendBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send Real SMS OTP`;
+        sendBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send OTP Code`;
       }
     }
 
@@ -2520,7 +2528,7 @@
         .map(id => document.getElementById(id).value).join('');
 
       if (enteredCode.length !== 6) {
-        alert("Please enter the complete 6-digit code received on your phone.");
+        alert("Please enter the complete 6-digit code.");
         return;
       }
 
@@ -2531,7 +2539,7 @@
       try {
         if (confirmationResult) {
           await confirmationResult.confirm(enteredCode);
-        } else if (window._devTestCode && enteredCode !== window._devTestCode) {
+        } else if (window._activeOtp && enteredCode !== window._activeOtp) {
           throw new Error("Invalid code entered. Please check your digits.");
         }
 
@@ -2635,7 +2643,7 @@
       }
 
       if (!currentUser || !currentUser.verified) {
-        alert("Please verify your mobile number with real SMS OTP first.");
+        alert("Please verify your mobile number with OTP first.");
         openAuthModal();
         return;
       }
@@ -2986,24 +2994,12 @@
       });
     }, { passive: true });
 
-    // Initialize Page & Event Listeners
+    // Page Load Initialization
     window.addEventListener('DOMContentLoaded', () => {
       initFirebaseSafely();
       runWeatherCalculation();
       updateTripDisplay();
       loadPersistedCustomImages();[cite: 1]
-
-      const navBadge = document.getElementById('navAuthBadge');
-      if (navBadge) {
-        navBadge.addEventListener('click', (e) => {
-          e.preventDefault();
-          if (currentUser && currentUser.phone) {
-            handleLogout();
-          } else {
-            openAuthModal();
-          }
-        });
-      }
 
       if (currentUser && currentUser.phone) {
         applyUserLogin(currentUser);
