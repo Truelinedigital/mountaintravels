@@ -3,8 +3,6 @@
  */
 
 // ================= 1. FIREBASE CONFIGURATION =================
-// Replace these values with your configuration from Firebase Console:
-// Project Settings > General > Your Apps > Web App (</>)
 const firebaseConfig = {
   apiKey: "AIzaSyCAuq3dYZnYLlnYd8j-FjyA0AP_EhZ7Ld8",
   authDomain: "mountaintravels-74489.firebaseapp.com",
@@ -15,7 +13,7 @@ const firebaseConfig = {
   measurementId: "G-RY421HFCNG"
 };
 
-// Initialize Firebase
+// Initialize Firebase (Compat mode for plain browser script tags)
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -85,7 +83,7 @@ function initRecaptcha() {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
       size: 'invisible',
       callback: () => {
-        // reCAPTCHA solved automatically
+        // Invisible reCAPTCHA verified
       },
       'expired-callback': () => {
         if (window.recaptchaVerifier) {
@@ -483,7 +481,7 @@ function submitTripModification() {
   closeTripModifyModal();
 }
 
-// Close modals when clicking the dim background
+// Close modals when clicking the backdrop
 window.onclick = function (e) {
   if (e.target && e.target.classList.contains('sheet-backdrop')) {
     e.target.classList.remove('show');
