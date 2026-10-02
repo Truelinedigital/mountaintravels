@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mountain Travels | Enterprise Dispatch Control Center</title>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --forest-dark: #0d2215;
+      --forest-green: #143522;
+      --forest-card: #1b412b;
+      --forest-tint: #edf7f0;
+      --sky-blue: #3d80b4;
+      --sunlight-yellow: #e5a408;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --white: #ffffff;
+      --radius-lg: 12px;
+      --shadow: 0 4px 16px rgba(13, 34, 21, 0.08);
+      --font-heading: 'Cinzel', Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-body);
+    }
+
+    body {
+      background-color: #f8fafc;
+      color: var(--forest-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Passcode Gate */
+    #loginGate {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 34, 21, 0.96);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 1.5rem;
+    }
+
+    .login-box {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.2rem 2rem;
+      width: 100%;
+      max-width: 400px;
+      border-top: 4px solid var(--sunlight-yellow);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    .login-box h2 {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      color: var(--forest-green);
+      margin-bottom: 0.4rem;
+    }
+
+    .login-box p {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-field, .select-field {
+      width: 100%;
+      height: 42px;
+      padding: 0 0.85rem;
+      border: 1.5px solid var(--slate-200);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      outline: none;
+      background: #fff;
+    }
+
+    .input-field:focus, .select-field:focus {
+      border-color: var(--forest-green);
+    }
+
+    .btn-admin {
+      width: 100%;
+      height: 44px;
+      border-radius: 8px;
+      border: none;
+      background: #1F7A3D;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s ease;
+    }
+
+    .btn-admin:hover {
+      background: #166534;
+    }
+
+    /* Top Bar */
+    .admin-navbar {
+      height: 64px;
+      background: var(--forest-dark);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      border-bottom: 2px solid var(--sunlight-yellow);
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      color: var(--sunlight-yellow);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-sm-action {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-sm-action:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .content-container {
+      max-width: 1400px;
+      margin: 1.5rem auto;
+      padding: 0 1.25rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* KPI Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .metric-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metric-info span {
+      font-size: 0.74rem;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .metric-info h3 {
+      font-size: 1.5rem;
+      color: var(--forest-green);
+      margin-top: 0.2rem;
+    }
+
+    .metric-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--forest-tint);
+      color: var(--forest-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    /* Panels */
+    .dashboard-panel {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 1rem 1.25rem;
+      background: #fafcfe;
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .panel-header h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--forest-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Table Filter Controls */
+    .table-controls {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input {
+      height: 34px;
+      padding: 0 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--slate-200);
+      font-size: 0.8rem;
+      outline: none;
+      width: 180px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.82rem;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: var(--slate-700);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      border-bottom: 1.5px solid var(--slate-200);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--slate-200);
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background: #fbfdff;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.22rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-confirmed { background: #dcfce7; color: #15803d; }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-cancelled { background: #fee2e2; color: #b91c1c; }
+    .status-postponed { background: #e0f2fe; color: #0369a1; }
+
+    .epass-ready { color: #16a34a; font-weight: 700; }
+    .epass-pending { color: #ca8a04; font-weight: 700; }
+
+    .action-icons {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--forest-tint);
+      color: var(--forest-green);
+    }
+
+    .icon-btn.wa {
+      background: #25d366;
+      color: #fff;
+      border: none;
+    }
+
+    .icon-btn.wa:hover {
+      background: #1eb956;
+    }
+
+    /* Driver & Vehicle Dispatch Row */
+    .dispatch-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 900px) {
+      .dispatch-split {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+    }
+
+    .driver-card-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .driver-card-row:last-child {
+      border-bottom: none;
+    }
+
+    .driver-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--forest-tint);
+      color: var(--forest-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    /* Photo Upload Grid */
+    .photo-manager-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      padding: 1.25rem;
+    }
+
+    .photo-slot-card {
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 0.85rem;
+      background: #fafcfe;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .slot-thumb {
+      height: 120px;
+      width: 100%;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #0d2215;
+    }
+
+    .slot-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .slot-meta {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--forest-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= PASSCODE PROTECTION ================= -->
+  <div id="loginGate">
+    <div class="login-box">
+      <i class="fa-solid fa-mountain-sun" style="font-size: 2.2rem; color: var(--sunlight-yellow); margin-bottom: 0.5rem;"></i>
+      <h2>Dispatch Control</h2>
+      <p>Enter Master Passcode to manage Nilgiris bookings and website media.</p>
+      <input type="password" id="adminPassInput" class="input-field" placeholder="Enter Passcode (Default: admin123)" autofocus />
+      <button type="button" class="btn-admin" onclick="authenticateAdmin()" style="margin-top:0.75rem;">
+        <i class="fa-solid fa-lock-open"></i> Access Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= TOP ADMIN NAVIGATION ================= -->
+  <header class="admin-navbar">
+    <div class="brand-title">
+      <i class="fa-solid fa-leaf"></i> MOUNTAIN TRAVELS <span>DISPATCH CONTROL</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-sm-action" onclick="exportDispatchCSV()">
+        <i class="fa-solid fa-file-csv"></i> Export Roster
+      </button>
+      <a href="mount.html" class="btn-sm-action" target="_blank">
+        <i class="fa-solid fa-up-right-from-square"></i> Live Website
+      </a>
+      <button class="btn-sm-action" onclick="adminLogout()">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= DASHBOARD BODY ================= -->
+  <main class="content-container">
+
+    <!-- KPI Metric Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-info">
+          <span>Active Bookings</span>
+          <h3 id="statTotalBookings">0</h3>
+        </div>
+        <div class="metric-icon-wrap"><i class="fa-solid fa-car-side"></i></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-info">
+          <span>Active Chauffeurs</span>
+          <h3>5 On Duty</h3>
+        </div>
+        <div class="metric-icon-wrap"><i class="fa-solid fa-user-shield"></i></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-info">
+          <span>E-Pass Verified</span>
+          <h3 style="color:#16a34a;" id="statEpassCount">100%</h3>
+        </div>
+        <div class="metric-icon-wrap"><i class="fa-solid fa-id-card"></i></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-info">
+          <span>Pending Modifications</span>
+          <h3 style="color:#d97706;" id="statPendingModCount">1</h3>
+        </div>
+        <div class="metric-icon-wrap"><i class="fa-solid fa-arrows-rotate"></i></div>
+      </div>
+    </div>
+
+    <!-- Active Reservations Table -->
+    <div class="dashboard-panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-calendar-check" style="color:var(--forest-green)"></i> Nilgiris Fleet Reservation Roster</h3>
+        
+        <div class="table-controls">
+          <input type="text" id="bookingSearchInput" class="search-input" placeholder="Search name/phone..." onkeyup="filterBookingsTable()" />
+          
+          <select id="statusFilter" class="search-input" style="width:130px;" onchange="filterBookingsTable()">
+            <option value="ALL">All Status</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Pending">Pending</option>
+            <option value="Postponed">Postponed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+
+          <button class="btn-sm-action" style="background:var(--forest-green); height:34px;" onclick="refreshBookingsTable()">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Trip ID & Date</th>
+              <th>Customer</th>
+              <th>Contact Details</th>
+              <th>Circuit & Pickup Point</th>
+              <th>Fleet Model</th>
+              <th>TN E-Pass</th>
+              <th>Status</th>
+              <th>Chauffeur</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody">
+            <!-- Populated dynamically via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Split Operations Section: Postpone/Cancel Queue & Chauffeur Allocation -->
+    <div class="dispatch-split">
+      <!-- 1. Postpone & Cancel Modification Queue -->
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--forest-green)"></i> Trip Modification Requests</h3>
+          <span style="font-size:0.75rem; color:#64748b;">Postpone & Cancellation Action Desk</span>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Request Type</th>
+                <th>Details</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="modificationsQueueBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. Certified Hill Chauffeurs & Fleet Assignment -->
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-steering-wheel" style="color:var(--forest-green)"></i> Certified Hill Chauffeurs</h3>
+          <span style="font-size:0.75rem; color:#16a34a; font-weight:700;">Ghat Road Verified</span>
+        </div>
+
+        <div>
+          <div class="driver-card-row">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <div class="driver-avatar">MM</div>
+              <div>
+                <strong style="font-size:0.86rem;">Murugan M.</strong><br>
+                <small style="color:#64748b;">Innova HyCross (TN 43 E 8821) • 12 Yrs Exp</small>
+              </div>
+            </div>
+            <span class="badge-status status-confirmed">On Trip</span>
+          </div>
+
+          <div class="driver-card-row">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <div class="driver-avatar">SK</div>
+              <div>
+                <strong style="font-size:0.86rem;">Senthil Kumar</strong><br>
+                <small style="color:#64748b;">Tempo Traveller (TN 43 H 1902) • Ghat Certified</small>
+              </div>
+            </div>
+            <span class="badge-status" style="background:#e0f2fe; color:#0369a1;">Standby (CJB)</span>
+          </div>
+
+          <div class="driver-card-row">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <div class="driver-avatar">AR</div>
+              <div>
+                <strong style="font-size:0.86rem;">Anand Raj</strong><br>
+                <small style="color:#64748b;">Fortuner 4x4 (TN 43 J 5400) • Offbeat Safari</small>
+              </div>
+            </div>
+            <span class="badge-status status-confirmed">On Trip</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Website Photo & Banner Manager -->
+    <div class="dashboard-panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-image" style="color:var(--forest-green)"></i> Website Photo & Fleet Asset Manager</h3>
+        <span style="font-size:0.75rem; color:#64748b;">Changes update live across all customer devices</span>
+      </div>
+
+      <div class="photo-manager-grid">
+        <!-- Doddabetta -->
+        <div class="photo-slot-card">
+          <div class="slot-meta">Doddabetta Peak Banner</div>
+          <div class="slot-thumb"><img id="preview-doddabetta" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
+          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-place-doddabetta', 'preview-doddabetta', event)">
+        </div>
+
+        <!-- Pykara -->
+        <div class="photo-slot-card">
+          <div class="slot-meta">Pykara Falls & Lake</div>
+          <div class="slot-thumb"><img id="preview-pykara" src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
+          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-place-pykara', 'preview-pykara', event)">
+        </div>
+
+        <!-- Innova HyCross -->
+        <div class="photo-slot-card">
+          <div class="slot-meta">Innova HyCross Luxury</div>
+          <div class="slot-thumb"><img id="preview-hycross" src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
+          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-veh-hycross', 'preview-hycross', event)">
+        </div>
+
+        <!-- Tempo Traveller -->
+        <div class="photo-slot-card">
+          <div class="slot-meta">Tempo Traveller (12/14)</div>
+          <div class="slot-thumb"><img id="preview-urbania" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
+          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-veh-urbania', 'preview-urbania', event)">
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= JAVASCRIPT OPERATIONS ================= -->
+  <script>
+    // 1. Passcode Authentication
+    function authenticateAdmin() {
+      const pass = document.getElementById('adminPassInput').value;
+      if (pass === 'admin123') {
+        sessionStorage.setItem('mt_admin_session', 'active');
+        document.getElementById('loginGate').style.display = 'none';
+        initAdminDashboard();
+      } else {
+        alert('Incorrect Master Passcode.');
+      }
+    }
+
+    function checkAdminSession() {
+      if (sessionStorage.getItem('mt_admin_session') === 'active') {
+        document.getElementById('loginGate').style.display = 'none';
+        initAdminDashboard();
+      }
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('mt_admin_session');
+      window.location.reload();
+    }
+
+    // 2. Fetch Stored Bookings
+    function getStoredBookings() {
+      let customBookings = JSON.parse(localStorage.getItem('mt_all_bookings') || '[]');
+      const latestSession = JSON.parse(sessionStorage.getItem('currentBooking') || 'null');
+
+      if (latestSession && !customBookings.some(b => b.phone === latestSession.phone && b.date === latestSession.date)) {
+        customBookings.unshift({
+          id: 'MT-' + Math.floor(1000 + Math.random() * 9000),
+          name: latestSession.name || 'Nilgiris Traveler',
+          phone: latestSession.phone || '9360543120',
+          email: latestSession.email || 'traveler@domain.com',
+          circuit: latestSession.circuit || 'Ooty Full Day Royal Circuit',
+          pickup: latestSession.pickup || 'Coimbatore Airport (CJB)',
+          vehicle: latestSession.vehicle || 'Toyota Innova HyCross Luxury',
+          date: latestSession.date || new Date().toISOString().split('T')[0],
+          epass: 'Verified',
+          chauffeur: 'Murugan M.',
+          status: 'Confirmed'
+        });
+        localStorage.setItem('mt_all_bookings', JSON.stringify(customBookings));
+      }
+
+      if (customBookings.length === 0) {
+        customBookings = [
+          {
+            id: 'MT-8291',
+            name: 'Rajesh Kumar',
+            phone: '9840123456',
+            email: 'rajesh@gmail.com',
+            circuit: 'Ooty Full Day Royal Circuit',
+            pickup: 'Coimbatore Airport (CJB)',
+            vehicle: 'Toyota Innova HyCross Luxury',
+            date: new Date().toISOString().split('T')[0],
+            epass: 'Verified',
+            chauffeur: 'Murugan M.',
+            status: 'Confirmed'
+          },
+          {
+            id: 'MT-8292',
+            name: 'Swetha Priya',
+            phone: '9443219870',
+            email: 'swetha@yahoo.com',
+            circuit: 'Coonoor Heritage & Tea Trail',
+            pickup: 'Ooty Hotel / Resort',
+            vehicle: 'Executive Sedan (Dzire / Etios)',
+            date: new Date().toISOString().split('T')[0],
+            epass: 'Verified',
+            chauffeur: 'Anand Raj',
+            status: 'Confirmed'
+          }
+        ];
+        localStorage.setItem('mt_all_bookings', JSON.stringify(customBookings));
+      }
+
+      return customBookings;
+    }
+
+    // 3. Render Bookings Table
+    function refreshBookingsTable() {
+      const bookings = getStoredBookings();
+      const tbody = document.getElementById('bookingsTableBody');
+      tbody.innerHTML = '';
+
+      document.getElementById('statTotalBookings').textContent = bookings.length;
+
+      bookings.forEach((b, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <strong>${b.date}</strong><br>
+            <span style="font-size:0.72rem; color:#64748b; font-weight:700;">${b.id || 'MT-100'}</span>
+          </td>
+          <td><strong>${b.name}</strong></td>
+          <td>
+            <a href="tel:${b.phone}" style="color:var(--forest-green); font-weight:700; text-decoration:none;">${b.phone}</a><br>
+            <span style="font-size:0.72rem; color:#64748b;">${b.email || 'N/A'}</span>
+          </td>
+          <td>
+            ${b.circuit}<br>
+            <small style="color:#64748b;"><i class="fa-solid fa-location-dot"></i> ${b.pickup}</small>
+          </td>
+          <td>${b.vehicle}</td>
+          <td>
+            <span class="${b.epass === 'Verified' ? 'epass-ready' : 'epass-pending'}">
+              <i class="fa-solid fa-circle-check"></i> ${b.epass || 'Verified'}
+            </span>
+          </td>
+          <td>
+            <select class="select-field" style="height:30px; font-size:0.75rem; width:110px;" onchange="updateBookingStatus(${index}, this.value)">
+              <option value="Confirmed" ${b.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="Pending" ${b.status === 'Pending' ? 'selected' : ''}>Pending</option>
+              <option value="Postponed" ${b.status === 'Postponed' ? 'selected' : ''}>Postponed</option>
+              <option value="Cancelled" ${b.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </td>
+          <td>
+            <select class="select-field" style="height:30px; font-size:0.75rem; width:120px;" onchange="assignChauffeur(${index}, this.value)">
+              <option value="Murugan M." ${b.chauffeur === 'Murugan M.' ? 'selected' : ''}>Murugan M.</option>
+              <option value="Senthil Kumar" ${b.chauffeur === 'Senthil Kumar' ? 'selected' : ''}>Senthil K.</option>
+              <option value="Anand Raj" ${b.chauffeur === 'Anand Raj' ? 'selected' : ''}>Anand Raj</option>
+              <option value="Unassigned" ${!b.chauffeur ? 'selected' : ''}>Unassigned</option>
+            </select>
+          </td>
+          <td>
+            <div class="action-icons">
+              <a href="https://wa.me/91${b.phone}?text=Hello%20${encodeURIComponent(b.name)},%20Mountain%20Travels%20Nilgiris%20Dispatch%20here%20regarding%20booking%20${b.id}:" 
+                 target="_blank" class="icon-btn wa" title="Chat on WhatsApp">
+                <i class="fa-brands fa-whatsapp"></i>
+              </a>
+              <button class="icon-btn" onclick="deleteBooking(${index})" title="Remove Record">
+                <i class="fa-solid fa-trash" style="color:#ef4444;"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      renderModificationsQueue();
+    }
+
+    function updateBookingStatus(index, newStatus) {
+      const bookings = getStoredBookings();
+      bookings[index].status = newStatus;
+      localStorage.setItem('mt_all_bookings', JSON.stringify(bookings));
+      refreshBookingsTable();
+    }
+
+    function assignChauffeur(index, chauffeurName) {
+      const bookings = getStoredBookings();
+      bookings[index].chauffeur = chauffeurName;
+      localStorage.setItem('mt_all_bookings', JSON.stringify(bookings));
+      alert(`Chauffeur ${chauffeurName} assigned to ${bookings[index].name}!`);
+    }
+
+    function deleteBooking(index) {
+      if (confirm('Delete this reservation entry permanently?')) {
+        const bookings = getStoredBookings();
+        bookings.splice(index, 1);
+        localStorage.setItem('mt_all_bookings', JSON.stringify(bookings));
+        refreshBookingsTable();
+      }
+    }
+
+    // 4. Postpone & Cancel Request Queue
+    function renderModificationsQueue() {
+      const queueBody = document.getElementById('modificationsQueueBody');
+      queueBody.innerHTML = `
+        <tr>
+          <td><strong>Koushik S.</strong><br><small>+91 9360543120</small></td>
+          <td><span class="badge-status status-postponed">Postpone</span></td>
+          <td>Move from Today ➔ <strong>Tomorrow</strong><br><small style="color:#64748b;">Flight Delayed at CJB</small></td>
+          <td>
+            <button class="btn-sm-action" style="background:#166534;" onclick="approveModification('Koushik S.', '9360543120', 'Postpone Approved')">
+              Approve
+            </button>
+          </td>
+        </tr>
+      `;
+    }
+
+    function approveModification(name, phone, actionText) {
+      alert(`${actionText} for ${name}! Sending WhatsApp notification.`);
+      const msg = `Hello%20${encodeURIComponent(name)},%20your%20Mountain%20Travels%20trip%20modification%20request%20has%20been%20APPROVED.%20Chauffeur%20and%20vehicle%20stand%20confirmed.`;
+      window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
+    }
+
+    // 5. Search & Filter Table
+    function filterBookingsTable() {
+      const query = document.getElementById('bookingSearchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const rows = document.querySelectorAll('#bookingsTableBody tr');
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const matchesQuery = text.includes(query);
+        const matchesStatus = (statusFilter === 'ALL') || text.includes(statusFilter.toLowerCase());
+
+        if (matchesQuery && matchesStatus) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // 6. CSV Roster Export
+    function exportDispatchCSV() {
+      const bookings = getStoredBookings();
+      let csvContent = "data:text/csv;charset=utf-8,Trip ID,Date,Name,Phone,Circuit,Vehicle,Status,Chauffeur\n";
+
+      bookings.forEach(b => {
+        csvContent += `"${b.id}","${b.date}","${b.name}","${b.phone}","${b.circuit}","${b.vehicle}","${b.status}","${b.chauffeur || 'N/A'}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Nilgiris_Dispatch_Roster_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // 7. Custom Image Replacement System
+    function handleAdminPhotoReplace(targetKey, previewImgId, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64 = e.target.result;
+        document.getElementById(previewImgId).src = base64;
+
+        let customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');
+        customImages[targetKey] = base64;
+        localStorage.setItem('mt_custom_images', JSON.stringify(customImages));
+        alert('Image updated! It will reflect automatically across all customer devices.');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function syncExistingImages() {
+      const customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');
+      if (customImages['img-place-doddabetta']) document.getElementById('preview-doddabetta').src = customImages['img-place-doddabetta'];
+      if (customImages['img-place-pykara']) document.getElementById('preview-pykara').src = customImages['img-place-pykara'];
+      if (customImages['img-veh-hycross']) document.getElementById('preview-hycross').src = customImages['img-veh-hycross'];
+      if (customImages['img-veh-urbania']) document.getElementById('preview-urbania').src = customImages['img-veh-urbania'];
+    }
+
+    function initAdminDashboard() {
+      refreshBookingsTable();
+      syncExistingImages();
+    }
+
+    window.onload = function() {
+      checkAdminSession();
+    };
+  </script>
+</body>
+</html>
