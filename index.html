@@ -94,11 +94,13 @@
       display: flex;
       align-items: center;
       text-decoration: none;
-      color: #fff;
-      font-weight: 800;
-      font-family: var(--font-heading);
-      letter-spacing: 1px;
-      font-size: 1.1rem;
+    }
+
+    .nav-logo-img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
     }
 
     .nav-desktop-links {
@@ -1469,7 +1471,7 @@
   <!-- TOP HEADER -->
   <header class="top-nav" id="topNav">
     <a href="#home" class="brand-logo">
-      <i class="fa-solid fa-mountain" style="color:var(--sunlight-yellow); margin-right:8px;"></i> MOUNTAIN TRAVELS
+      <img src="mountain.png" alt="MOUNTAIN TRAVELS" class="nav-logo-img" />
     </a>
 
     <ul class="nav-desktop-links">
@@ -1508,7 +1510,6 @@
 
   <!-- HERO SECTION WITH VIDEO BACKGROUND -->
   <section class="hero" id="home">
-    <!-- Background Video[cite: 3] -->
     <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
       <source src="webvid.mp4" type="video/mp4" />
       Your browser does not support the video tag.
@@ -2025,7 +2026,7 @@
               </div>
             </div>
 
-            <!-- TACTILE VEHICLE SELECTION CARDS[cite: 1] -->
+            <!-- TACTILE VEHICLE SELECTION CARDS -->
             <div class="form-group">
               <label class="form-label">Select Vehicle</label>
               
@@ -2044,7 +2045,7 @@
                   </div>
                 </div>
 
-                <!-- Innova (Active by Default)[cite: 1] -->
+                <!-- Innova (Active by Default) -->
                 <div class="vehicle-choice-card active" 
                      id="card-innova" 
                      onclick="pickVehicle('card-innova', 'Toyota Innova HyCross Luxury', 'Innova')">
@@ -2317,7 +2318,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', function () {
-      // 1. Force Video Autoplay Fallback[cite: 3]
+      // Force Video Autoplay Fallback[cite: 3]
       var bgVideo = document.querySelector('.hero-bg-video');
       if (bgVideo) {
         bgVideo.muted = true;
@@ -2329,7 +2330,7 @@
         }
       }
 
-      // 2. Set default dates
+      // Initialize date inputs
       var dateInput = document.getElementById('resDate');
       var modDateInput = document.getElementById('modNewDate');
       var today = new Date();
@@ -2347,7 +2348,7 @@
         modDateInput.min = todayStr;
       }
 
-      // 3. Navbar scroll listener
+      // Navbar scroll listener
       window.addEventListener('scroll', function () {
         var topNav = document.getElementById('topNav');
         if (topNav) {
@@ -2364,7 +2365,7 @@
     });
 
     /**
-     * Vehicle Selection Engine[cite: 1]
+     * Vehicle Selection Handler[cite: 1]
      */
     function pickVehicle(cardId, fullTitle, shortTitle) {
       var cards = document.querySelectorAll('.vehicle-choice-card');
