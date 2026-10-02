@@ -1522,7 +1522,7 @@
       </a>
 
       <!-- HIGH-VISIBILITY REGISTRATION BADGE BUTTON -->
-      <button type="button" id="navAuthBadge" class="user-avatar-chip" onclick="openAuthModal()">
+      <button type="button" id="navAuthBadge" class="user-avatar-chip" onclick="openAuthModal(event)">
         <i class="fa-solid fa-mobile-screen-button"></i> <span>Mobile Register</span>
       </button>
     </div>
@@ -1988,7 +1988,7 @@
         <div class="booking-form-col">
           <div class="booking-auth-alert" id="authAlertBanner">
             <div id="authAlertText"><strong>Mobile Verification Required</strong> to lock in the 20% discount.</div>
-            <button type="button" class="btn-action btn-ride" style="height:34px; padding:0 0.85rem; font-size:0.75rem; width:auto;" onclick="openAuthModal()" id="authAlertBtn">
+            <button type="button" class="btn-action btn-ride" style="height:34px; padding:0 0.85rem; font-size:0.75rem; width:auto;" onclick="openAuthModal(event)" id="authAlertBtn">
               <i class="fa-solid fa-shield-halved"></i> Verify Mobile OTP
             </button>
           </div>
@@ -2048,7 +2048,7 @@
                 <option value="1 - 2 Guests">1 - 2 Guests</option>
                 <option value="3 - 4 Guests" selected>3 - 4 Guests</option>
                 <option value="5 - 6 Guests">5 - 6 Guests</option>
-                <option value="7 - 12 Guests">7 - 12 Guests (Tempo)</option>
+                <option value="7 - 12 Guests (Tempo)">7 - 12 Guests (Tempo)</option>
               </select>
             </div>
 
@@ -2193,7 +2193,7 @@
   </footer>
 
   <!-- ================= MODAL: REAL SMS OTP ================= -->
-  <div class="sheet-backdrop" id="authModal">
+  <div class="sheet-backdrop" id="authModal" style="display: none; z-index: 999999;">
     <div class="sheet-card">
       <button class="sheet-close" onclick="closeAuthModal()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
 
@@ -2217,8 +2217,6 @@
           <label class="form-label" for="modalNameInput">Your Name</label>
           <input type="text" id="modalNameInput" class="form-input" placeholder="e.g. Koushik" />
         </div>
-
-        <div id="recaptcha-container" style="margin: 0.5rem 0;"></div>
 
         <button type="button" id="btnSendOtp" class="btn-action btn-ride" onclick="sendRealPhoneOtp()" style="margin-top:0.5rem;">
           <i class="fa-solid fa-paper-plane"></i> Send OTP Code
