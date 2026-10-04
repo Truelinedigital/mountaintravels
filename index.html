@@ -1517,6 +1517,95 @@
       color: var(--sunlight-yellow);
     }
 
+    /* CUSTOMER REVIEW FORM (rating + note) */
+    .form-textarea {
+      height: auto;
+      min-height: 110px;
+      padding: 0.7rem 0.85rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .review-form-fieldset {
+      border: none;
+      min-inline-size: 0;
+      margin-bottom: 0.85rem;
+    }
+
+    .review-form-fieldset legend {
+      margin-bottom: 0.3rem;
+    }
+
+    .star-rating-row {
+      display: inline-flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      gap: 0.3rem;
+    }
+
+    .star-rating-row input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .star-rating-row label {
+      font-size: 1.9rem;
+      line-height: 1;
+      color: #cbd5e1;
+      cursor: pointer;
+      padding: 0.15rem;
+      transition: color 0.15s ease, transform 0.15s ease;
+    }
+
+    .star-rating-row input:checked ~ label,
+    .star-rating-row label:hover,
+    .star-rating-row label:hover ~ label {
+      color: #fbbc04;
+    }
+
+    .star-rating-row label:hover {
+      transform: scale(1.12);
+    }
+
+    .star-rating-row input:focus-visible + label {
+      outline: 2.5px solid var(--sky-blue);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    .star-rating-text {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .review-char-count {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .form-error {
+      display: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #dc2626;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      padding: 0.45rem 0.65rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .form-textarea:focus-visible {
+      outline: 2.5px solid var(--sky-blue);
+      outline-offset: 2px;
+    }
+
     /* FIX: very small phones - keep the header on one line */
     @media (max-width: 380px) {
       .top-nav {
@@ -1899,7 +1988,10 @@
           Based on <strong>840+ genuine guest reviews</strong> on Google Business Profile
         </div>
       </div>
-      <div>
+      <div style="display:flex; flex-wrap:wrap; gap:0.6rem;">
+        <button type="button" class="btn-action btn-ride" style="height:38px; font-size:0.8rem; width:auto;" onclick="openReviewModal()">
+          <i class="fa-solid fa-star"></i> Rate Your Trip
+        </button>
         <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="btn-action" style="background:#fff; color:#1a73e8; border:1.5px solid #dadce0; height:38px; font-size:0.8rem; width:auto;">
           <i class="fa-solid fa-pen-to-square"></i> Write a Google Review
         </a>
@@ -2415,6 +2507,62 @@
     </div>
   </div>
 
+  <!-- MODAL: CUSTOMER REVIEW (rating + note) -->
+  <div class="sheet-backdrop" id="reviewModal" role="dialog" aria-modal="true" aria-labelledby="reviewModalHeading">
+    <div class="sheet-card">
+      <button class="sheet-close" onclick="closeReviewModal()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
+      <form id="reviewForm" novalidate>
+        <div style="text-align: center; margin-bottom: 1.2rem;">
+          <i class="fa-solid fa-star" style="font-size:1.8rem; color:var(--sunlight-yellow);"></i>
+          <h3 id="reviewModalHeading" style="font-family: var(--font-heading); color: var(--forest-green); font-size:1.15rem; margin-top:0.3rem;">Rate Your Trip</h3>
+          <p style="font-size:0.78rem; color:var(--text-muted);">Tell us how your Nilgiris ride was.</p>
+        </div>
+
+        <fieldset class="review-form-fieldset">
+          <legend class="form-label">Your Rating *</legend>
+          <div class="star-rating-row">
+            <input type="radio" name="reviewStars" id="star5" value="5" /><label for="star5" title="Excellent"><span class="sr-only-text" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">5 stars</span><i class="fa-solid fa-star" aria-hidden="true"></i></label>
+            <input type="radio" name="reviewStars" id="star4" value="4" /><label for="star4" title="Very good"><span class="sr-only-text" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">4 stars</span><i class="fa-solid fa-star" aria-hidden="true"></i></label>
+            <input type="radio" name="reviewStars" id="star3" value="3" /><label for="star3" title="Good"><span class="sr-only-text" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">3 stars</span><i class="fa-solid fa-star" aria-hidden="true"></i></label>
+            <input type="radio" name="reviewStars" id="star2" value="2" /><label for="star2" title="Fair"><span class="sr-only-text" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">2 stars</span><i class="fa-solid fa-star" aria-hidden="true"></i></label>
+            <input type="radio" name="reviewStars" id="star1" value="1" /><label for="star1" title="Poor"><span class="sr-only-text" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);">1 star</span><i class="fa-solid fa-star" aria-hidden="true"></i></label>
+          </div>
+          <div class="star-rating-text" id="starRatingText" aria-live="polite">Tap a star to rate</div>
+        </fieldset>
+
+        <div class="form-group">
+          <label class="form-label" for="reviewName">Your Name *</label>
+          <input type="text" id="reviewName" class="form-input" placeholder="e.g. Rahul" maxlength="60" autocomplete="name" />
+        </div>
+
+        <div class="form-group" style="gap:0.3rem;">
+          <label class="form-label" for="reviewText">Your Review *</label>
+          <textarea id="reviewText" class="form-input form-textarea" placeholder="Tell us about your driver, the vehicle and the places you visited." maxlength="500"></textarea>
+          <div class="review-char-count" id="reviewCount">0 / 500</div>
+        </div>
+
+        <div class="form-error" id="reviewError" role="alert"></div>
+
+        <button type="submit" class="btn-action btn-ride">
+          <i class="fa-solid fa-paper-plane"></i> Submit Review
+        </button>
+        <p style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:0.7rem;">
+          Your review opens in WhatsApp, ready to send to our team.
+        </p>
+      </form>
+
+      <div id="reviewSuccess" style="display:none; text-align:center; padding:0.5rem 0;">
+        <i class="fa-solid fa-circle-check" style="font-size:2.2rem; color:#1F7A3D;"></i>
+        <h3 style="font-family: var(--font-heading); color: var(--forest-green); font-size:1.15rem; margin-top:0.5rem;">Thank You!</h3>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin:0.4rem 0 1.2rem;">
+          Your review is ready in WhatsApp. Tap Send there to deliver it to our team.
+        </p>
+        <button type="button" class="btn-action btn-ride" onclick="closeReviewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MOBILE BOTTOM BAR -->
   <nav class="mobile-tab-bar" aria-label="Bottom Navigation">
     <a href="#home" class="tab-link active">
@@ -2561,6 +2709,105 @@
           otps.forEach(function (o, k) { o.value = text[k] || ''; });
           otps[Math.min(text.length, otps.length) - 1].focus();
         });
+      });
+    })();
+  </script>
+
+  <!-- CUSTOMER REVIEW FORM LOGIC -->
+  <script>
+    (function () {
+      'use strict';
+
+      var WA_NUMBER = '919360543120';
+      var RATING_LABELS = { 1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Very good', 5: 'Excellent' };
+
+      var modal = document.getElementById('reviewModal');
+      var form = document.getElementById('reviewForm');
+      var success = document.getElementById('reviewSuccess');
+      var errBox = document.getElementById('reviewError');
+      var nameEl = document.getElementById('reviewName');
+      var textEl = document.getElementById('reviewText');
+      var countEl = document.getElementById('reviewCount');
+      var ratingText = document.getElementById('starRatingText');
+      var opener = null;
+
+      if (!modal || !form) return;
+
+      function selectedRating() {
+        var checked = form.querySelector('input[name="reviewStars"]:checked');
+        return checked ? parseInt(checked.value, 10) : 0;
+      }
+
+      function showError(msg) {
+        errBox.textContent = msg;
+        errBox.style.display = msg ? 'block' : 'none';
+      }
+
+      function resetForm() {
+        form.reset();
+        showError('');
+        countEl.textContent = '0 / 500';
+        ratingText.textContent = 'Tap a star to rate';
+        form.style.display = '';
+        success.style.display = 'none';
+      }
+
+      window.openReviewModal = function () {
+        opener = document.activeElement;
+        resetForm();
+        modal.classList.add('show');
+        setTimeout(function () { nameEl.focus(); }, 50);
+      };
+
+      window.closeReviewModal = function () {
+        modal.classList.remove('show');
+        if (opener && typeof opener.focus === 'function') opener.focus();
+      };
+
+      /* click outside the card closes the modal */
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) window.closeReviewModal();
+      });
+
+      /* live rating text + character counter */
+      form.addEventListener('change', function (e) {
+        if (e.target && e.target.name === 'reviewStars') {
+          var r = selectedRating();
+          ratingText.textContent = r + ' / 5 - ' + RATING_LABELS[r];
+          showError('');
+        }
+      });
+
+      textEl.addEventListener('input', function () {
+        countEl.textContent = textEl.value.length + ' / 500';
+      });
+
+      /* validate, then hand the review to the business on WhatsApp */
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var rating = selectedRating();
+        var name = nameEl.value.trim();
+        var text = textEl.value.trim();
+
+        if (!rating) { showError('Please choose a star rating.'); return; }
+        if (!name) { showError('Please enter your name.'); nameEl.focus(); return; }
+        if (text.length < 10) { showError('Please write at least 10 characters about your trip.'); textEl.focus(); return; }
+
+        showError('');
+
+        var stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating);
+        var message = 'Hello Mountain Travels, I would like to share my review.\n\n' +
+                      'Rating: ' + rating + '/5 ' + stars + '\n' +
+                      'Name: ' + name + '\n' +
+                      'Review: ' + text;
+        var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(message);
+
+        var w = window.open(url, '_blank');
+        if (w) { w.opener = null; } else { window.location.href = url; }
+
+        form.style.display = 'none';
+        success.style.display = 'block';
       });
     })();
   </script>
