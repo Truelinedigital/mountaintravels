@@ -10,180 +10,203 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-:root{--dark:#0d2215;--green:#143522;--tint:#edf7f0;--gold:#e5a408;--blue:#3d80b4;--bg:#f4f7f5;--line:#e2e8f0;--mut:#55695d;--red:#dc2626;--ok:#15803d;--white:#fff;
+:root{--dark:#0d2215;--green:#143522;--btn:#1F7A3D;--tint:#edf7f0;--gold:#e5a408;--blue:#3d80b4;--bg:#f3f6f4;--line:#e2e8f0;--mut:#55695d;--red:#dc2626;
 --hd:'Cinzel',Georgia,serif;--bd:'Plus Jakarta Sans',system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--bd);background:var(--bg);color:var(--dark);font-size:.9rem;line-height:1.5}
-button{font-family:inherit;cursor:pointer}
+body{font-family:var(--bd);background:var(--bg);color:var(--dark);font-size:.88rem;line-height:1.5}
+button,input,select{font-family:inherit}button{cursor:pointer}
 :focus-visible{outline:2.5px solid var(--blue);outline-offset:2px}
 .hidden{display:none!important}
+.logo-img{height:56px;width:auto;max-width:100%;object-fit:contain}
+.logo-img.raw{mix-blend-mode:screen}
 
-/* LOGIN */
+/* login */
 .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.25rem;background:linear-gradient(160deg,var(--dark),var(--green))}
-.login-card{background:#fff;width:100%;max-width:400px;border-radius:16px;padding:2rem 1.5rem;border-top:4px solid var(--gold);box-shadow:0 20px 45px rgba(0,0,0,.4)}
-.login-card h1{font-family:var(--hd);color:var(--green);font-size:1.3rem;text-align:center;margin:.4rem 0 .2rem}
-.login-card p.sub{text-align:center;color:var(--mut);font-size:.8rem;margin-bottom:1.25rem}
+.login-card{background:#fff;width:100%;max-width:400px;border-radius:16px;padding:1.8rem 1.5rem;border-top:4px solid var(--gold);box-shadow:0 20px 45px rgba(0,0,0,.4)}
+.login-card .lg{display:flex;justify-content:center;background:var(--dark);border-radius:12px;padding:.5rem;margin-bottom:1rem}
+.login-card h1{font-family:var(--hd);color:var(--green);font-size:1.25rem;text-align:center}
+.login-card .sub{text-align:center;color:var(--mut);font-size:.8rem;margin:.2rem 0 1.2rem}
 .field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.85rem}
-.field label{font-size:.74rem;font-weight:700;text-transform:uppercase}
-.field input,.field select{height:44px;padding:0 .85rem;border:1.5px solid #cbe0f0;border-radius:8px;font:inherit;background:#fbfdff}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;height:42px;padding:0 1.1rem;border:none;border-radius:8px;background:#1F7A3D;color:#fff;font-weight:700;font-size:.85rem}
+.field label{font-size:.74rem;font-weight:700}
+.in{height:42px;padding:0 .85rem;border:1.5px solid #cbe0f0;border-radius:8px;font-size:.86rem;background:#fbfdff;width:100%}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;height:40px;padding:0 1rem;border:none;border-radius:8px;background:var(--btn);color:#fff;font-weight:700;font-size:.82rem;text-decoration:none;white-space:nowrap}
 .btn:hover{background:var(--green)}
-.btn.full{width:100%}
-.btn.ghost{background:#fff;color:var(--green);border:1px solid var(--line)}
-.btn.ghost:hover{background:var(--tint)}
-.btn.sm{height:34px;padding:0 .8rem;font-size:.78rem}
-.btn.danger{background:#fff;color:var(--red);border:1px solid #fecaca}
-.btn.danger:hover{background:#fef2f2}
+.btn.full{width:100%;height:44px}
+.btn.sm{height:34px;padding:0 .75rem;font-size:.76rem}
+.btn.ghost{background:#fff;color:var(--green);border:1px solid var(--line)}.btn.ghost:hover{background:var(--tint)}
+.btn.wa{background:#25d366}.btn.wa:hover{background:#1ebd5a}
+.btn.danger{background:#fff;color:var(--red);border:1px solid #fecaca}.btn.danger:hover{background:#fef2f2}
 .btn:disabled{opacity:.6;cursor:wait}
-.logo-box{background:transparent;padding:.2rem;display:flex;justify-content:center;margin-bottom:.9rem}
-.logo-img{height:64px;width:auto;max-width:100%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
-.logo-img.raw{mix-blend-mode:screen;filter:none}
-.login-card .logo-img.raw{mix-blend-mode:normal}
-.side .brand{padding:.1rem .4rem 1rem}
-.side .logo-img{height:48px}
 .msg{display:none;font-size:.78rem;font-weight:600;padding:.5rem .7rem;border-radius:6px;margin-bottom:.85rem;color:var(--red);background:#fef2f2;border:1px solid #fecaca}
 
-/* LAYOUT */
+/* shell */
 .app{display:flex;min-height:100vh}
-.side{width:230px;background:var(--dark);color:#cbdad1;padding:1.25rem .9rem;display:flex;flex-direction:column;gap:.3rem;position:sticky;top:0;height:100vh;border-right:2px solid var(--gold)}
-.side .brand{font-family:var(--hd);color:#fff;font-size:1.05rem;padding:.25rem .6rem 1rem;display:flex;align-items:center;gap:.5rem}
-.side .brand i{color:var(--gold)}
-.nav{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-radius:8px;background:none;border:none;color:inherit;font-weight:600;font-size:.86rem;text-align:left;width:100%}
+.side{width:236px;flex-shrink:0;background:var(--dark);color:#cbdad1;padding:1rem .8rem;display:flex;flex-direction:column;gap:.2rem;position:sticky;top:0;height:100vh;border-right:2px solid var(--gold)}
+.side .logo-img{height:50px;margin:0 0 1rem .3rem}
+.nav{display:flex;align-items:center;gap:.7rem;padding:.62rem .8rem;border-radius:8px;background:none;border:none;color:inherit;font-weight:600;font-size:.84rem;width:100%;text-align:left;text-decoration:none}
 .nav:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav.on{background:var(--gold);color:var(--dark)}
 .nav i{width:18px;text-align:center}
-.side .spacer{flex:1}
-.main{flex:1;min-width:0;padding:1.5rem}
-.top{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
-.top h2{font-family:var(--hd);font-size:1.4rem;color:var(--green)}
-.who{font-size:.78rem;color:var(--mut)}
+.nav .cnt{margin-left:auto;background:var(--red);color:#fff;border-radius:999px;font-size:.66rem;padding:0 .45rem;min-width:18px;text-align:center}
+.nav .cnt:empty{display:none}
+.side .sp{flex:1}.side hr{border:none;border-top:1px solid rgba(255,255,255,.12);margin:.4rem 0}
+.main{flex:1;min-width:0;padding:1.4rem 1.6rem}
+.top{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:1.2rem}
+.top h2{font-family:var(--hd);font-size:1.35rem;color:var(--green)}
+.top .r{display:flex;align-items:center;gap:.7rem}
+.who{font-size:.76rem;color:var(--mut)}
 .tabbar{display:none}
-@media(max-width:860px){
- .side{display:none}
- .main{padding:1rem 1rem 5.5rem}
+@media(max-width:900px){
+ .side{display:none}.main{padding:1rem 1rem 5.5rem}.who{display:none}.top h2{font-size:1.15rem}
  .tabbar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--dark);border-top:2px solid var(--gold);padding-bottom:env(safe-area-inset-bottom,0)}
- .tabbar button{flex:1;background:none;border:none;color:#9cb5a5;padding:.55rem 0;font-size:.65rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:.2rem}
- .tabbar button i{font-size:1.05rem}
- .tabbar button.on{color:var(--gold)}
+ .tabbar button{flex:1;position:relative;background:none;border:none;color:#9cb5a5;padding:.5rem 0;font-size:.64rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:.2rem}
+ .tabbar button i{font-size:1.05rem}.tabbar button.on{color:var(--gold)}
+ .tabbar .cnt{position:absolute;top:2px;left:55%;background:var(--red);color:#fff;border-radius:999px;font-size:.6rem;padding:0 .35rem}
+ .tabbar .cnt:empty{display:none}
 }
 
-/* CARDS */
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1.25rem}
-@media(min-width:860px){.stats{grid-template-columns:repeat(4,1fr)}}
-.stat{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:12px;padding:1rem}
-.stat .n{font-family:var(--hd);font-size:1.7rem;color:var(--green);line-height:1.1}
-.stat .l{font-size:.76rem;color:var(--mut);margin-top:.2rem}
-.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.1rem;margin-bottom:1rem}
-.panel h3{font-size:.95rem;margin-bottom:.7rem}
-.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem}
-.links a{display:flex;align-items:center;gap:.6rem;padding:.7rem .8rem;border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--green);font-weight:600;font-size:.82rem}
-.links a:hover{background:var(--tint)}
-
-.toolbar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
-.chip{padding:.4rem .9rem;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:.78rem;font-weight:700;color:#334155}
+/* content */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1rem}
+@media(min-width:900px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:.9rem 1rem}
+.stat .n{font-size:1.65rem;font-weight:700;color:var(--green);line-height:1.15}
+.stat .l{font-size:.75rem;color:var(--mut)}
+.grid2{display:grid;gap:1rem}
+@media(min-width:1000px){.grid2{grid-template-columns:1.4fr 1fr}}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:1rem}
+.panel h3{font-size:.92rem;margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem}
+.panel h3 i{color:var(--gold)}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.5rem}
+.links a{display:flex;align-items:center;gap:.55rem;padding:.65rem .75rem;border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--green);font-weight:600;font-size:.8rem}
+.links a:hover{background:var(--tint)}.links a i{color:var(--btn);width:16px;text-align:center}
+.toolbar{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+.toolbar .in{max-width:260px;height:38px}.toolbar .sp{flex:1}
+.chip{padding:.38rem .85rem;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:.76rem;font-weight:700;color:#334155}
 .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
-.rev{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:.8rem}
-.rev-h{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:flex-start}
-.rev-n{font-weight:700}
-.rev-d{font-size:.72rem;color:var(--mut)}
-.stars{color:#fbbc04;font-size:.8rem;margin:.25rem 0}
-.stars .off{color:#d5dbe3}
-.rev p{font-size:.84rem;color:#334155;margin:.4rem 0 .8rem;word-break:break-word}
-.rev-a{display:flex;gap:.5rem;flex-wrap:wrap}
-.badge{font-size:.68rem;font-weight:700;padding:.18rem .55rem;border-radius:999px}
-.badge.pend{background:#fef3c7;color:#92400e}
-.badge.live{background:#dcfce7;color:var(--ok)}
-.empty{text-align:center;color:var(--mut);padding:2rem 1rem;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;font-size:.84rem}
+.cards{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fill,minmax(310px,1fr))}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:.95rem;display:flex;flex-direction:column;gap:.5rem}
+.card .h{display:flex;justify-content:space-between;gap:.5rem;align-items:flex-start}
+.card .nm{font-weight:700}.card .d{font-size:.72rem;color:var(--mut)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.2rem .7rem;font-size:.8rem}
+.kv span:nth-child(odd){color:var(--mut)}.kv span:nth-child(even){font-weight:600;word-break:break-word}
+.acts{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.2rem}
+.acts select{height:34px;border:1px solid var(--line);border-radius:8px;padding:0 .5rem;font-size:.76rem;font-weight:600;background:#fff}
+.badge{font-size:.68rem;font-weight:700;padding:.16rem .55rem;border-radius:999px;white-space:nowrap}
+.b-new,.b-pend{background:#dbeafe;color:#1d4ed8}.b-pend{background:#fef3c7;color:#92400e}
+.b-confirmed,.b-live{background:#dcfce7;color:#15803d}.b-completed{background:#e2e8f0;color:#475569}.b-cancelled{background:#fee2e2;color:#b91c1c}
+.stars{color:#fbbc04;font-size:.78rem}.stars .off{color:#d5dbe3}
+.card p{font-size:.83rem;color:#334155;word-break:break-word}
+.empty{text-align:center;color:var(--mut);padding:1.8rem 1rem;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;font-size:.82rem;grid-column:1/-1}
 .tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px}
-table{border-collapse:collapse;width:100%;min-width:560px;font-size:.8rem}
-th,td{padding:.65rem .8rem;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
-th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--green)}
-.toast{position:fixed;left:50%;bottom:5rem;transform:translateX(-50%);background:var(--dark);color:#fff;padding:.6rem 1rem;border-radius:8px;font-size:.8rem;font-weight:600;z-index:99;border-left:3px solid var(--gold);opacity:0;pointer-events:none;transition:opacity .2s}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.78rem}
+th,td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top:0}
+.st{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--line);font-size:.82rem}
+.st:last-child{border:none}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:.4rem;background:#94a3b8}
+.dot.ok{background:#16a34a}.dot.bad{background:var(--red)}
+.toast{position:fixed;left:50%;bottom:5rem;transform:translateX(-50%);background:var(--dark);color:#fff;padding:.6rem 1rem;border-radius:8px;font-size:.8rem;font-weight:600;z-index:99;border-left:3px solid var(--gold);opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
 .toast.show{opacity:1}
 @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login" id="loginView">
   <form class="login-card" id="loginForm" novalidate>
-    <div class="logo-box"><img src="Mountain.png" alt="Mountain Travels" class="logo-img"></div>
+    <div class="lg"><img src="Mountain.png" alt="Mountain Travels" class="logo-img"></div>
     <h1>Admin Login</h1>
     <p class="sub">Sign in with your admin email and password.</p>
     <div class="msg" id="loginErr" role="alert"></div>
-    <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" placeholder="admin email" required></div>
-    <div class="field"><label for="pass">Password</label><input id="pass" type="password" autocomplete="current-password" required></div>
+    <div class="field"><label for="email">Email</label><input class="in" id="email" type="email" autocomplete="username" required></div>
+    <div class="field"><label for="pass">Password</label><input class="in" id="pass" type="password" autocomplete="current-password" required></div>
     <button class="btn full" id="loginBtn" type="submit"><i class="fa-solid fa-lock"></i> Sign in</button>
   </form>
 </div>
 
-<!-- APP -->
 <div class="app hidden" id="appView">
   <aside class="side">
-    <div class="brand"><img src="Mountain.png" alt="Mountain Travels" class="logo-img"></div>
+    <img src="Mountain.png" alt="Mountain Travels" class="logo-img">
     <button class="nav on" data-tab="overview"><i class="fa-solid fa-gauge"></i> Overview</button>
-    <button class="nav" data-tab="reviews"><i class="fa-solid fa-star"></i> Reviews</button>
-    <button class="nav" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</button>
+    <button class="nav" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Bookings <span class="cnt" id="cntBook"></span></button>
+    <button class="nav" data-tab="reviews"><i class="fa-solid fa-star"></i> Reviews <span class="cnt" id="cntRev"></span></button>
     <button class="nav" data-tab="customers"><i class="fa-solid fa-users"></i> Customers</button>
-    <div class="spacer"></div>
-    <a class="nav" href="index.html" style="text-decoration:none"><i class="fa-solid fa-arrow-up-right-from-square"></i> View website</a>
+    <button class="nav" data-tab="settings"><i class="fa-solid fa-gear"></i> Settings</button>
+    <div class="sp"></div><hr>
+    <a class="nav" href="https://truelinedigital.github.io/mountaintravels/" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-globe"></i> Open website</a>
     <button class="nav" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button>
   </aside>
 
   <main class="main">
     <div class="top">
       <h2 id="pageTitle">Overview</h2>
-      <div class="who" id="who"></div>
+      <div class="r"><span class="who" id="who"></span>
+        <a class="btn ghost sm" href="https://truelinedigital.github.io/mountaintravels/" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square"></i> Website</a></div>
     </div>
 
     <section id="tab-overview">
       <div class="stats">
-        <div class="stat"><div class="n" id="sTotal">0</div><div class="l">Total reviews</div></div>
-        <div class="stat"><div class="n" id="sPending">0</div><div class="l">Waiting for approval</div></div>
-        <div class="stat"><div class="n" id="sAvg">-</div><div class="l">Average rating (live)</div></div>
-        <div class="stat"><div class="n" id="sBook">0</div><div class="l">Bookings saved</div></div>
+        <div class="stat"><div class="n" id="sNew">0</div><div class="l">New bookings</div></div>
+        <div class="stat"><div class="n" id="sToday">0</div><div class="l">Trips today</div></div>
+        <div class="stat"><div class="n" id="sPend">0</div><div class="l">Reviews to approve</div></div>
+        <div class="stat"><div class="n" id="sAvg">-</div><div class="l">Live rating</div></div>
       </div>
-      <div class="panel">
-        <h3>Quick actions</h3>
-        <div class="links">
-          <a href="tel:+919360543120"><i class="fa-solid fa-phone"></i> Call dispatcher</a>
-          <a href="https://wa.me/919360543120" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i> Open WhatsApp</a>
-          <a href="mailto:reservations.mountaintravels@gmail.com"><i class="fa-solid fa-envelope"></i> Email bookings desk</a>
-          <a href="index.html#reserve"><i class="fa-solid fa-car-side"></i> Booking form</a>
-          <a href="index.html#reviews"><i class="fa-solid fa-comments"></i> Reviews on site</a>
-          <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-fire"></i> Firebase console</a>
+      <div class="grid2">
+        <div class="panel"><h3><i class="fa-solid fa-bell"></i> Latest booking requests</h3><div class="cards" id="recent" style="grid-template-columns:1fr"></div></div>
+        <div>
+          <div class="panel"><h3><i class="fa-solid fa-bolt"></i> Quick actions</h3>
+            <div class="links">
+              <a href="tel:+919360543120"><i class="fa-solid fa-phone"></i> Call dispatcher</a>
+              <a href="https://wa.me/919360543120" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+              <a href="mailto:reservations.mountaintravels@gmail.com"><i class="fa-solid fa-envelope"></i> Bookings email</a>
+              <a href="https://truelinedigital.github.io/mountaintravels/#reserve" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-car-side"></i> Booking form</a>
+              <a href="https://truelinedigital.github.io/mountaintravels/#fleet" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-van-shuttle"></i> Fleet page</a>
+              <a href="https://truelinedigital.github.io/mountaintravels/#reviews" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-comments"></i> Reviews on site</a>
+            </div></div>
         </div>
       </div>
     </section>
 
-    <section id="tab-reviews" class="hidden">
-      <div class="toolbar" id="revFilters">
-        <button class="chip on" data-f="pending">Pending</button>
-        <button class="chip" data-f="live">Approved</button>
-        <button class="chip" data-f="all">All</button>
+    <section id="tab-bookings" class="hidden">
+      <div class="toolbar">
+        <input class="in" id="bookSearch" type="search" placeholder="Search name, phone, route" aria-label="Search bookings">
+        <span id="bookChips"></span><span class="sp"></span>
+        <button class="btn ghost sm" id="csvBookings"><i class="fa-solid fa-download"></i> Export CSV</button>
       </div>
-      <div id="revList"></div>
+      <div class="cards" id="bookList"></div>
     </section>
 
-    <section id="tab-bookings" class="hidden">
-      <div class="toolbar"><button class="btn ghost sm" id="csvBookings"><i class="fa-solid fa-download"></i> Export CSV</button></div>
-      <div id="bookList"></div>
+    <section id="tab-reviews" class="hidden">
+      <div class="toolbar" id="revChips"></div>
+      <div class="cards" id="revList"></div>
     </section>
 
     <section id="tab-customers" class="hidden">
-      <div class="toolbar"><button class="btn ghost sm" id="csvCustomers"><i class="fa-solid fa-download"></i> Export CSV</button></div>
+      <div class="toolbar"><input class="in" id="custSearch" type="search" placeholder="Search customers" aria-label="Search customers"><span class="sp"></span>
+        <button class="btn ghost sm" id="csvCustomers"><i class="fa-solid fa-download"></i> Export CSV</button></div>
       <div id="custList"></div>
+    </section>
+
+    <section id="tab-settings" class="hidden">
+      <div class="grid2">
+        <div class="panel"><h3><i class="fa-solid fa-plug"></i> Website connection</h3>
+          <div id="conn"></div>
+          <p style="font-size:.75rem;color:var(--mut);margin-top:.6rem">Green means this page can read the data your website saves. Red usually means the Firestore rules need updating.</p></div>
+        <div class="panel"><h3><i class="fa-solid fa-user-shield"></i> Account</h3>
+          <div class="st"><span>Signed in as</span><strong id="acct"></strong></div>
+          <div class="acts" style="margin-top:.8rem">
+            <button class="btn ghost sm" id="resetPw"><i class="fa-solid fa-key"></i> Email me a password reset</button>
+            <button class="btn danger sm" id="logoutBtn3"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button></div></div>
+      </div>
     </section>
   </main>
 </div>
 
 <nav class="tabbar hidden" id="tabbar" aria-label="Admin navigation">
-  <button class="on" data-tab="overview"><i class="fa-solid fa-gauge"></i>Overview</button>
-  <button data-tab="reviews"><i class="fa-solid fa-star"></i>Reviews</button>
-  <button data-tab="bookings"><i class="fa-solid fa-calendar-check"></i>Bookings</button>
+  <button class="on" data-tab="overview"><i class="fa-solid fa-gauge"></i>Home</button>
+  <button data-tab="bookings"><i class="fa-solid fa-calendar-check"></i>Bookings<span class="cnt" id="cntBook2"></span></button>
+  <button data-tab="reviews"><i class="fa-solid fa-star"></i>Reviews<span class="cnt" id="cntRev2"></span></button>
   <button data-tab="customers"><i class="fa-solid fa-users"></i>Customers</button>
-  <button id="logoutBtn2"><i class="fa-solid fa-right-from-bracket"></i>Sign out</button>
+  <button data-tab="settings"><i class="fa-solid fa-gear"></i>Settings</button>
 </nav>
 <div class="toast" id="toast" role="status"></div>
 
@@ -193,9 +216,6 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
 <script>
 (function () {
   'use strict';
-
-  /* ===== SETTINGS ===== */
-  // 1) Paste the SAME Firebase web config that is inside your script.js
   var FIREBASE_CONFIG = {
     apiKey: 'AIzaSyCAuq3dYZnYLlnYd8j-FjyA0AP_EhZ7Ld8',
     authDomain: 'mountaintravels-74489.firebaseapp.com',
@@ -205,217 +225,211 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
     appId: '1:524468956734:web:9e089d3cc950aa85cdab6f',
     measurementId: 'G-RY421HFCNG'
   };
-  // 2) Only these emails can use the admin (also enforce this in Firestore rules)
   var ADMIN_EMAILS = ['koushiksk744@gmail.com'];
-  // 3) Firestore collection names. Bookings/customers show once your site saves to them.
   var COL = { reviews: 'reviews', bookings: 'bookings', customers: 'users' };
+  var STATUSES = ['new', 'confirmed', 'completed', 'cancelled'];
 
-  /* ===== SETUP ===== */
   var $ = function (id) { return document.getElementById(id); };
-  var db, auth, unsubs = [];
-  var reviews = [], bookings = [], customers = [], filter = 'pending';
-
   if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-  auth = firebase.auth();
-  db = firebase.firestore();
+  var auth = firebase.auth(), db = firebase.firestore();
+  var unsubs = [], data = { reviews: [], bookings: [], customers: [] }, health = {}, loaded = {};
+  var bf = 'all', rf = 'pending';
 
-  function el(tag, cls, text) {
-    var n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text !== undefined && text !== null) n.textContent = text;
-    return n;
-  }
+  function el(t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x !== undefined && x !== null) n.textContent = x; return n; }
   function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
-  var toastT;
-  function toast(m) {
-    var t = $('toast'); t.textContent = m; t.classList.add('show');
-    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2200);
-  }
-  function fmtDate(v) {
-    if (v && typeof v.toDate === 'function') v = v.toDate();
-    if (!(v instanceof Date)) return '';
-    return v.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
-  }
+  function ico(cls) { var i = el('i', cls); i.setAttribute('aria-hidden', 'true'); return i; }
+  function btn(cls, icon, label, fn) { var b = el('button', 'btn sm ' + cls); b.type = 'button'; b.appendChild(ico(icon)); b.appendChild(document.createTextNode(' ' + label)); b.addEventListener('click', function () { fn(b); }); return b; }
+  function link(cls, icon, label, href) { var a = el('a', 'btn sm ' + cls); a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.appendChild(ico(icon)); a.appendChild(document.createTextNode(' ' + label)); return a; }
+  var tt; function toast(m) { var t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(function () { t.classList.remove('show'); }, 2600); }
+  function ts(o) { var v = o.createdAt; return v && v.toDate ? v.toDate().getTime() : 0; }
+  function fmt(v) { if (v && v.toDate) v = v.toDate(); return v instanceof Date ? v.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : ''; }
+  function fmtDay(s) { if (!s) return '-'; var p = String(s).split('-'); if (p.length !== 3) return s; return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
+  function todayISO() { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+  function tenDigits(p) { return String(p || '').replace(/\D/g, '').slice(-10); }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
-  /* ===== LOGIN ===== */
+  /* ---------- login ---------- */
   function loginErr(m) { var b = $('loginErr'); b.textContent = m; b.style.display = m ? 'block' : 'none'; }
-
   $('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var email = $('email').value.trim().toLowerCase(), pass = $('pass').value;
     if (!/^\S+@\S+\.\S+$/.test(email)) { loginErr('Enter a valid email address.'); return; }
     if (!pass) { loginErr('Enter your password.'); return; }
-    loginErr('');
-    var btn = $('loginBtn'); btn.disabled = true;
+    loginErr(''); var b = $('loginBtn'); b.disabled = true;
     auth.signInWithEmailAndPassword(email, pass).catch(function (err) {
       var bad = ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'];
-      loginErr(bad.indexOf(err.code) > -1 ? 'Email or password is incorrect.' : 'Sign in failed: ' + (err.code || err.message));
-    }).then(function () { btn.disabled = false; });
+      loginErr(bad.indexOf(err.code) > -1 ? 'Email or password is incorrect.' : err.code === 'auth/too-many-requests' ? 'Too many attempts. Wait a few minutes and try again.' : 'Sign in failed: ' + (err.code || err.message));
+    }).then(function () { b.disabled = false; });
+  });
+  ['logoutBtn', 'logoutBtn3'].forEach(function (id) { $(id).addEventListener('click', function () { auth.signOut(); }); });
+  $('resetPw').addEventListener('click', function () {
+    var u = auth.currentUser; if (!u) return;
+    auth.sendPasswordResetEmail(u.email).then(function () { toast('Reset link sent to ' + u.email); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
   });
 
-  function signOut() { auth.signOut(); }
-  $('logoutBtn').addEventListener('click', signOut);
-  $('logoutBtn2').addEventListener('click', signOut);
-
   auth.onAuthStateChanged(function (user) {
-    unsubs.forEach(function (u) { u(); }); unsubs = [];
-    var allowed = user && user.email && ADMIN_EMAILS.indexOf(user.email.toLowerCase()) > -1;
-    if (user && !allowed) {
-      auth.signOut(); loginErr('This account does not have admin access.'); return;
-    }
+    unsubs.forEach(function (u) { u(); }); unsubs = []; loaded = {};
+    var ok = user && user.email && ADMIN_EMAILS.indexOf(user.email.toLowerCase()) > -1;
+    if (user && !ok) { auth.signOut(); loginErr('This account does not have admin access.'); return; }
     $('loginView').classList.toggle('hidden', !!user);
     $('appView').classList.toggle('hidden', !user);
     $('tabbar').classList.toggle('hidden', !user);
-    if (user) { $('who').textContent = user.email; startListeners(); }
+    if (user) { $('who').textContent = user.email; $('acct').textContent = user.email; start(); }
   });
 
-  /* ===== TABS ===== */
-  var TITLES = { overview: 'Overview', reviews: 'Reviews', bookings: 'Bookings', customers: 'Customers' };
+  /* ---------- tabs ---------- */
+  var TITLES = { overview: 'Overview', bookings: 'Bookings', reviews: 'Reviews', customers: 'Customers', settings: 'Settings' };
   function showTab(name) {
-    ['overview', 'reviews', 'bookings', 'customers'].forEach(function (t) {
-      $('tab-' + t).classList.toggle('hidden', t !== name);
-    });
+    Object.keys(TITLES).forEach(function (t) { $('tab-' + t).classList.toggle('hidden', t !== name); });
     document.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === name); });
-    $('pageTitle').textContent = TITLES[name];
-    window.scrollTo(0, 0);
+    $('pageTitle').textContent = TITLES[name]; window.scrollTo(0, 0);
+    if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
   }
-  document.querySelectorAll('[data-tab]').forEach(function (b) {
-    b.addEventListener('click', function () { showTab(b.getAttribute('data-tab')); });
-  });
+  document.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { showTab(b.getAttribute('data-tab')); }); });
+  window.addEventListener('load', function () { var h = location.hash.slice(1); if (TITLES[h]) showTab(h); });
 
-  /* ===== LIVE DATA ===== */
-  function listen(name, cb) {
-    var u = db.collection(COL[name]).limit(300).onSnapshot(function (snap) {
-      var rows = [];
-      snap.forEach(function (d) { var o = d.data(); o.id = d.id; rows.push(o); });
-      rows.sort(function (a, b) { return time(b) - time(a); });
-      cb(rows);
+  /* ---------- live data ---------- */
+  function listen(name) {
+    unsubs.push(db.collection(COL[name]).limit(500).onSnapshot(function (snap) {
+      var rows = []; snap.forEach(function (d) { var o = d.data(); o.id = d.id; rows.push(o); });
+      rows.sort(function (a, b) { return ts(b) - ts(a); });
+      if (name === 'bookings' && loaded[name]) {
+        snap.docChanges().forEach(function (c) { if (c.type === 'added') toast('New booking from ' + (c.doc.data().name || 'a customer')); });
+      }
+      loaded[name] = true; health[name] = { ok: true, n: rows.length }; data[name] = rows; renderAll();
     }, function (err) {
-      console.warn('[Admin] ' + name + ':', err.code || err.message);
-      if (name === 'reviews') toast('Cannot read reviews: ' + (err.code || err.message));
-      cb([]);
-    });
-    unsubs.push(u);
+      health[name] = { ok: false, msg: err.code || err.message }; data[name] = []; renderAll();
+    }));
   }
-  function time(o) {
-    var v = o.createdAt || o.timestamp;
-    return v && typeof v.toDate === 'function' ? v.toDate().getTime() : 0;
-  }
+  function start() { ['reviews', 'bookings', 'customers'].forEach(listen); }
 
-  function startListeners() {
-    listen('reviews', function (r) { reviews = r; renderReviews(); renderStats(); });
-    listen('bookings', function (r) { bookings = r; renderTable($('bookList'), r, 'No bookings saved yet. Your site currently sends bookings to WhatsApp.'); renderStats(); });
-    listen('customers', function (r) { customers = r; renderTable($('custList'), r, 'No registered customers found.'); });
-  }
+  function renderAll() { renderStats(); renderBookings(); renderReviews(); renderCustomers(); renderConn(); }
 
   function renderStats() {
-    var live = reviews.filter(function (r) { return r.approved === true; });
-    $('sTotal').textContent = reviews.length;
-    $('sPending').textContent = reviews.length - live.length;
-    $('sBook').textContent = bookings.length;
-    var avg = live.length ? live.reduce(function (s, r) { return s + (r.rating || 0); }, 0) / live.length : 0;
-    $('sAvg').textContent = live.length ? avg.toFixed(1) : '-';
+    var b = data.bookings, r = data.reviews, today = todayISO();
+    var nw = b.filter(function (x) { return (x.status || 'new') === 'new'; }).length;
+    var pend = r.filter(function (x) { return x.approved !== true; });
+    var live = r.filter(function (x) { return x.approved === true; });
+    $('sNew').textContent = nw;
+    $('sToday').textContent = b.filter(function (x) { return x.date === today && x.status !== 'cancelled'; }).length;
+    $('sPend').textContent = pend.length;
+    $('sAvg').textContent = live.length ? (live.reduce(function (s, x) { return s + (x.rating || 0); }, 0) / live.length).toFixed(1) : '-';
+    ['cntBook', 'cntBook2'].forEach(function (id) { $(id).textContent = nw || ''; });
+    ['cntRev', 'cntRev2'].forEach(function (id) { $(id).textContent = pend.length || ''; });
+    var box = $('recent'); clear(box);
+    var latest = b.filter(function (x) { return (x.status || 'new') === 'new'; }).slice(0, 4);
+    if (!latest.length) box.appendChild(el('div', 'empty', health.bookings && !health.bookings.ok ? 'Cannot read bookings yet. See Settings.' : 'No new booking requests.'));
+    latest.forEach(function (x) { box.appendChild(bookingCard(x)); });
   }
 
-  /* ===== REVIEWS ===== */
-  document.querySelectorAll('#revFilters .chip').forEach(function (c) {
-    c.addEventListener('click', function () {
-      filter = c.getAttribute('data-f');
-      document.querySelectorAll('#revFilters .chip').forEach(function (x) { x.classList.toggle('on', x === c); });
-      renderReviews();
-    });
-  });
-
-  function renderReviews() {
-    var box = $('revList'); clear(box);
-    var rows = reviews.filter(function (r) {
-      return filter === 'all' || (filter === 'live' ? r.approved === true : r.approved !== true);
-    });
-    if (!rows.length) {
-      box.appendChild(el('div', 'empty', filter === 'pending' ? 'No reviews waiting for approval.' : 'No reviews here yet.'));
-      return;
-    }
-    rows.forEach(function (r) {
-      var card = el('article', 'rev');
-      var h = el('div', 'rev-h');
-      var left = el('div');
-      left.appendChild(el('div', 'rev-n', r.name || 'Anonymous'));
-      left.appendChild(el('div', 'rev-d', fmtDate(r.createdAt)));
-      h.appendChild(left);
-      h.appendChild(el('span', 'badge ' + (r.approved ? 'live' : 'pend'), r.approved ? 'Live on site' : 'Pending'));
-      card.appendChild(h);
-
-      var stars = el('div', 'stars'); stars.setAttribute('role', 'img'); stars.setAttribute('aria-label', (r.rating || 0) + ' out of 5');
-      for (var i = 1; i <= 5; i++) {
-        var s = el('i', 'fa-solid fa-star' + (i <= r.rating ? '' : ' off')); s.setAttribute('aria-hidden', 'true'); stars.appendChild(s);
-      }
-      card.appendChild(stars);
-      card.appendChild(el('p', null, r.text || ''));
-
-      var a = el('div', 'rev-a');
-      var tog = el('button', 'btn sm' + (r.approved ? ' ghost' : ''));
-      tog.type = 'button';
-      tog.innerHTML = r.approved ? '<i class="fa-solid fa-eye-slash"></i> Hide from site' : '<i class="fa-solid fa-check"></i> Approve';
-      tog.addEventListener('click', function () {
-        tog.disabled = true;
-        db.collection(COL.reviews).doc(r.id).update({ approved: !r.approved })
-          .then(function () { toast(r.approved ? 'Review hidden' : 'Review approved'); })
-          .catch(function (e) { toast('Failed: ' + (e.code || e.message)); tog.disabled = false; });
-      });
-      var del = el('button', 'btn sm danger'); del.type = 'button';
-      del.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
-      del.addEventListener('click', function () {
-        if (!confirm('Delete this review permanently?')) return;
-        db.collection(COL.reviews).doc(r.id).delete()
-          .then(function () { toast('Review deleted'); })
-          .catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
-      });
-      a.appendChild(tog); a.appendChild(del);
-      card.appendChild(a);
-      box.appendChild(card);
-    });
-  }
-
-  /* ===== GENERIC TABLES + CSV ===== */
-  function cols(rows) {
-    var set = {};
-    rows.forEach(function (r) { Object.keys(r).forEach(function (k) { if (k !== 'id') set[k] = 1; }); });
-    return Object.keys(set);
-  }
-  function cell(v) {
-    if (v && typeof v.toDate === 'function') return fmtDate(v);
-    if (v === null || v === undefined) return '';
-    if (typeof v === 'object') return JSON.stringify(v);
-    return String(v);
-  }
-  function renderTable(box, rows, emptyMsg) {
+  /* ---------- bookings ---------- */
+  function chips(box, list, current, set) {
     clear(box);
-    if (!rows.length) { box.appendChild(el('div', 'empty', emptyMsg)); return; }
-    var c = cols(rows);
-    var wrap = el('div', 'tw'), t = el('table'), thead = el('thead'), hr = el('tr');
-    c.forEach(function (k) { hr.appendChild(el('th', null, k)); });
-    thead.appendChild(hr); t.appendChild(thead);
-    var tb = el('tbody');
-    rows.forEach(function (r) {
-      var tr = el('tr');
-      c.forEach(function (k) { var td = el('td', null, cell(r[k])); td.title = cell(r[k]); tr.appendChild(td); });
-      tb.appendChild(tr);
+    list.forEach(function (k) {
+      var c = el('button', 'chip' + (k.v === current ? ' on' : ''), k.t); c.type = 'button';
+      c.addEventListener('click', function () { set(k.v); }); box.appendChild(c);
     });
+  }
+  function bookingCard(b) {
+    var st = b.status || 'new', card = el('article', 'card');
+    var h = el('div', 'h'), l = el('div');
+    l.appendChild(el('div', 'nm', b.name || 'Customer')); l.appendChild(el('div', 'd', 'Received ' + fmt(b.createdAt)));
+    h.appendChild(l); h.appendChild(el('span', 'badge b-' + st, cap(st))); card.appendChild(h);
+    var kv = el('div', 'kv');
+    [['Trip', b.circuit], ['Date', fmtDay(b.date)], ['Pickup', b.pickup], ['Vehicle', b.vehicle], ['Guests', b.guests], ['Phone', b.phone]].forEach(function (p) {
+      kv.appendChild(el('span', null, p[0])); kv.appendChild(el('span', null, p[1] || '-'));
+    });
+    card.appendChild(kv);
+    var a = el('div', 'acts'), sel = el('select'); sel.setAttribute('aria-label', 'Booking status');
+    STATUSES.forEach(function (s) { var o = el('option', null, cap(s)); o.value = s; if (s === st) o.selected = true; sel.appendChild(o); });
+    sel.addEventListener('change', function () {
+      db.collection(COL.bookings).doc(b.id).update({ status: sel.value }).then(function () { toast('Marked ' + sel.value); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
+    });
+    a.appendChild(sel);
+    var ph = tenDigits(b.phone);
+    if (ph.length === 10) {
+      var msg = 'Hello ' + (b.name || '') + ', this is Mountain Travels. Your ' + (b.vehicle || 'ride') + ' for ' + (b.circuit || 'your trip') + ' on ' + fmtDay(b.date) + ' is confirmed. Pickup: ' + (b.pickup || '') + '. Thank you!';
+      a.appendChild(link('wa', 'fa-brands fa-whatsapp', 'WhatsApp', 'https://wa.me/91' + ph + '?text=' + encodeURIComponent(msg)));
+      a.appendChild(link('ghost', 'fa-solid fa-phone', 'Call', 'tel:+91' + ph));
+    }
+    a.appendChild(btn('danger', 'fa-solid fa-trash', 'Delete', function () {
+      if (confirm('Delete this booking permanently?')) db.collection(COL.bookings).doc(b.id).delete().then(function () { toast('Booking deleted'); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
+    }));
+    card.appendChild(a); return card;
+  }
+  $('bookSearch').addEventListener('input', renderBookings);
+  function renderBookings() {
+    chips($('bookChips'), [{ v: 'all', t: 'All' }].concat(STATUSES.map(function (s) { return { v: s, t: cap(s) }; })), bf, function (v) { bf = v; renderBookings(); });
+    var q = $('bookSearch').value.trim().toLowerCase(), box = $('bookList'); clear(box);
+    var rows = data.bookings.filter(function (b) {
+      return (bf === 'all' || (b.status || 'new') === bf) && (!q || [b.name, b.phone, b.circuit, b.vehicle, b.pickup].join(' ').toLowerCase().indexOf(q) > -1);
+    });
+    if (!rows.length) { box.appendChild(el('div', 'empty', health.bookings && !health.bookings.ok ? 'Cannot read bookings: ' + health.bookings.msg : 'No bookings found. New requests from the website appear here instantly.')); return; }
+    rows.forEach(function (b) { box.appendChild(bookingCard(b)); });
+  }
+
+  /* ---------- reviews ---------- */
+  function renderReviews() {
+    chips($('revChips'), [{ v: 'pending', t: 'Pending' }, { v: 'live', t: 'Approved' }, { v: 'all', t: 'All' }], rf, function (v) { rf = v; renderReviews(); });
+    var box = $('revList'); clear(box);
+    var rows = data.reviews.filter(function (r) { return rf === 'all' || (rf === 'live' ? r.approved === true : r.approved !== true); });
+    if (!rows.length) { box.appendChild(el('div', 'empty', health.reviews && !health.reviews.ok ? 'Cannot read reviews: ' + health.reviews.msg : rf === 'pending' ? 'No reviews waiting for approval.' : 'No reviews here yet.')); return; }
+    rows.forEach(function (r) {
+      var card = el('article', 'card'), h = el('div', 'h'), l = el('div');
+      l.appendChild(el('div', 'nm', r.name || 'Anonymous')); l.appendChild(el('div', 'd', fmt(r.createdAt)));
+      h.appendChild(l); h.appendChild(el('span', 'badge ' + (r.approved ? 'b-live' : 'b-pend'), r.approved ? 'Live on site' : 'Pending')); card.appendChild(h);
+      var s = el('div', 'stars'); s.setAttribute('role', 'img'); s.setAttribute('aria-label', (r.rating || 0) + ' out of 5');
+      for (var i = 1; i <= 5; i++) s.appendChild(ico('fa-solid fa-star' + (i <= r.rating ? '' : ' off')));
+      card.appendChild(s); card.appendChild(el('p', null, r.text || ''));
+      var a = el('div', 'acts');
+      a.appendChild(btn(r.approved ? 'ghost' : '', r.approved ? 'fa-solid fa-eye-slash' : 'fa-solid fa-check', r.approved ? 'Hide from site' : 'Approve', function (b) {
+        b.disabled = true;
+        db.collection(COL.reviews).doc(r.id).update({ approved: !r.approved }).then(function () { toast(r.approved ? 'Review hidden' : 'Review approved'); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); b.disabled = false; });
+      }));
+      a.appendChild(btn('danger', 'fa-solid fa-trash', 'Delete', function () {
+        if (confirm('Delete this review permanently?')) db.collection(COL.reviews).doc(r.id).delete().then(function () { toast('Review deleted'); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
+      }));
+      card.appendChild(a); box.appendChild(card);
+    });
+  }
+
+  /* ---------- tables, csv ---------- */
+  function cols(rows) { var s = {}; rows.forEach(function (r) { Object.keys(r).forEach(function (k) { if (k !== 'id') s[k] = 1; }); }); return Object.keys(s); }
+  function cell(v) { if (v && v.toDate) return fmt(v); if (v === null || v === undefined) return ''; return typeof v === 'object' ? JSON.stringify(v) : String(v); }
+  $('custSearch').addEventListener('input', renderCustomers);
+  function renderCustomers() {
+    var box = $('custList'); clear(box);
+    var q = $('custSearch').value.trim().toLowerCase();
+    var rows = data.customers.filter(function (r) { return !q || JSON.stringify(r).toLowerCase().indexOf(q) > -1; });
+    if (!rows.length) { box.appendChild(el('div', 'empty', health.customers && !health.customers.ok ? 'Cannot read customers: ' + health.customers.msg : 'No registered customers found.')); return; }
+    var c = cols(rows), wrap = el('div', 'tw'), t = el('table'), hr = el('tr');
+    c.forEach(function (k) { hr.appendChild(el('th', null, k)); });
+    var th = el('thead'); th.appendChild(hr); t.appendChild(th);
+    var tb = el('tbody');
+    rows.forEach(function (r) { var tr = el('tr'); c.forEach(function (k) { var td = el('td', null, cell(r[k])); td.title = cell(r[k]); tr.appendChild(td); }); tb.appendChild(tr); });
     t.appendChild(tb); wrap.appendChild(t); box.appendChild(wrap);
   }
   function exportCsv(rows, name) {
     if (!rows.length) { toast('Nothing to export'); return; }
-    var c = cols(rows);
-    var esc = function (v) { v = cell(v).replace(/"/g, '""'); return /^[=+\-@]/.test(v) ? '"\'' + v + '"' : '"' + v + '"'; };
+    var c = cols(rows), esc = function (v) { v = cell(v).replace(/"/g, '""'); return /^[=+\-@]/.test(v) ? '"\'' + v + '"' : '"' + v + '"'; };
     var lines = [c.map(esc).join(',')].concat(rows.map(function (r) { return c.map(function (k) { return esc(r[k]); }).join(','); }));
-    var blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
     var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = name + '-' + new Date().toISOString().slice(0, 10) + '.csv';
-    document.body.appendChild(a); a.click(); a.remove();
+    a.href = URL.createObjectURL(new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8' }));
+    a.download = name + '-' + todayISO() + '.csv'; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   }
-  $('csvBookings').addEventListener('click', function () { exportCsv(bookings, 'bookings'); });
-  $('csvCustomers').addEventListener('click', function () { exportCsv(customers, 'customers'); });
+  $('csvBookings').addEventListener('click', function () { exportCsv(data.bookings, 'bookings'); });
+  $('csvCustomers').addEventListener('click', function () { exportCsv(data.customers, 'customers'); });
+
+  /* ---------- settings: connection status ---------- */
+  function renderConn() {
+    var box = $('conn'); clear(box);
+    [['reviews', 'Reviews'], ['bookings', 'Bookings'], ['customers', 'Customers']].forEach(function (p) {
+      var h = health[p[0]], row = el('div', 'st'), l = el('span');
+      var d = el('span', 'dot' + (h ? (h.ok ? ' ok' : ' bad') : '')); l.appendChild(d); l.appendChild(document.createTextNode(p[1] + ' (' + COL[p[0]] + ')'));
+      row.appendChild(l); row.appendChild(el('span', null, !h ? 'Checking...' : h.ok ? h.n + ' records' : h.msg)); box.appendChild(row);
+    });
+  }
 })();
 </script>
 
@@ -424,41 +438,27 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
 (function () {
   var imgs = Array.prototype.slice.call(document.querySelectorAll('.logo-img'));
   if (!imgs.length) return;
-  var src = imgs[0].getAttribute('src');
   var probe = new Image();
   probe.onload = function () {
     try {
-      var w = probe.naturalWidth, h = probe.naturalHeight;
-      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var w = probe.naturalWidth, h = probe.naturalHeight, c = document.createElement('canvas'); c.width = w; c.height = h;
       var x = c.getContext('2d'); x.drawImage(probe, 0, 0);
-      var d = x.getImageData(0, 0, w, h), px = d.data;
-      var LIM = 70, seen = new Uint8Array(w * h), stack = [];
-      function bg(i) { return px[i * 4 + 3] < 20 || Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) < LIM; }
-      function push(i) { if (!seen[i] && bg(i)) { seen[i] = 1; stack.push(i); } }
+      var d = x.getImageData(0, 0, w, h), px = d.data, seen = new Uint8Array(w * h), st = [];
+      function bg(i) { return px[i * 4 + 3] < 20 || Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) < 70; }
+      function push(i) { if (!seen[i] && bg(i)) { seen[i] = 1; st.push(i); } }
       for (var a = 0; a < w; a++) { push(a); push((h - 1) * w + a); }
       for (var b = 0; b < h; b++) { push(b * w); push(b * w + w - 1); }
-      while (stack.length) {
-        var i = stack.pop(), cx = i % w, cy = (i / w) | 0;
-        if (cx > 0) push(i - 1); if (cx < w - 1) push(i + 1);
-        if (cy > 0) push(i - w); if (cy < h - 1) push(i + w);
+      while (st.length) {
+        var i = st.pop(), cx = i % w, cy = (i / w) | 0;
+        if (cx > 0) push(i - 1); if (cx < w - 1) push(i + 1); if (cy > 0) push(i - w); if (cy < h - 1) push(i + w);
       }
-      for (var k = 0; k < seen.length; k++) {
-        if (seen[k]) px[k * 4 + 3] = 0;
-      }
-      /* soften the 1px edge so there is no dark halo */
-      for (var y = 1; y < h - 1; y++) for (var z = 1; z < w - 1; z++) {
-        var j = y * w + z;
-        if (!seen[j] && (seen[j - 1] || seen[j + 1] || seen[j - w] || seen[j + w]) && Math.max(px[j * 4], px[j * 4 + 1], px[j * 4 + 2]) < 110) px[j * 4 + 3] = 90;
-      }
+      for (var k = 0; k < seen.length; k++) if (seen[k]) px[k * 4 + 3] = 0;
       x.putImageData(d, 0, 0);
       var url = c.toDataURL('image/png');
       imgs.forEach(function (im) { im.src = url; });
-    } catch (e) {
-      imgs.forEach(function (im) { im.classList.add('raw'); }); /* e.g. opened as a local file */
-    }
+    } catch (e) { imgs.forEach(function (im) { im.classList.add('raw'); }); }
   };
-  probe.onerror = function () {};
-  probe.src = src;
+  probe.src = imgs[0].getAttribute('src');
 })();
 </script>
 </body>
