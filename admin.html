@@ -110,9 +110,9 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
   <form class="login-card" id="loginForm" novalidate>
     <div class="logo-box"><img src="Mountain.png" alt="Mountain Travels" class="logo-img"></div>
     <h1>Admin Login</h1>
-    <p class="sub">Sign in with your admin mobile number.</p>
+    <p class="sub">Sign in with your admin email and password.</p>
     <div class="msg" id="loginErr" role="alert"></div>
-    <div class="field"><label for="email">Mobile number</label><input id="email" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="username" required></div>
+    <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" placeholder="admin email" required></div>
     <div class="field"><label for="pass">Password</label><input id="pass" type="password" autocomplete="current-password" required></div>
     <button class="btn full" id="loginBtn" type="submit"><i class="fa-solid fa-lock"></i> Sign in</button>
   </form>
@@ -205,9 +205,8 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
     appId: '1:524468956734:web:9e089d3cc950aa85cdab6f',
     measurementId: 'G-RY421HFCNG'
   };
-  // 2) Only these mobile numbers can use the admin (also enforce this in Firestore rules)
-  var ADMIN_PHONES = ['9360543120'];
-  var LOGIN_DOMAIN = '@admin.mountaintravels.in'; // Firebase user email = mobile + this
+  // 2) Only these emails can use the admin (also enforce this in Firestore rules)
+  var ADMIN_EMAILS = ['koushiksk744@gmail.com'];
   // 3) Firestore collection names. Bookings/customers show once your site saves to them.
   var COL = { reviews: 'reviews', bookings: 'bookings', customers: 'users' };
 
@@ -243,15 +242,14 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
 
   $('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var phone = $('email').value.replace(/\D/g, ''), pass = $('pass').value;
-    if (!/^[6-9][0-9]{9}$/.test(phone)) { loginErr('Enter a valid 10-digit mobile number.'); return; }
+    var email = $('email').value.trim().toLowerCase(), pass = $('pass').value;
+    if (!/^\S+@\S+\.\S+$/.test(email)) { loginErr('Enter a valid email address.'); return; }
     if (!pass) { loginErr('Enter your password.'); return; }
-    var email = phone + LOGIN_DOMAIN;
     loginErr('');
     var btn = $('loginBtn'); btn.disabled = true;
     auth.signInWithEmailAndPassword(email, pass).catch(function (err) {
       var bad = ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'];
-      loginErr(bad.indexOf(err.code) > -1 ? 'Mobile number or password is incorrect.' : 'Sign in failed: ' + (err.code || err.message));
+      loginErr(bad.indexOf(err.code) > -1 ? 'Email or password is incorrect.' : 'Sign in failed: ' + (err.code || err.message));
     }).then(function () { btn.disabled = false; });
   });
 
@@ -261,15 +259,14 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
 
   auth.onAuthStateChanged(function (user) {
     unsubs.forEach(function (u) { u(); }); unsubs = [];
-    var phoneId = user && user.email ? user.email.split('@')[0] : '';
-    var allowed = user && user.email && user.email.toLowerCase().slice(-LOGIN_DOMAIN.length) === LOGIN_DOMAIN && ADMIN_PHONES.indexOf(phoneId) > -1;
+    var allowed = user && user.email && ADMIN_EMAILS.indexOf(user.email.toLowerCase()) > -1;
     if (user && !allowed) {
       auth.signOut(); loginErr('This account does not have admin access.'); return;
     }
     $('loginView').classList.toggle('hidden', !!user);
     $('appView').classList.toggle('hidden', !user);
     $('tabbar').classList.toggle('hidden', !user);
-    if (user) { $('who').textContent = '+91 ' + phoneId; startListeners(); }
+    if (user) { $('who').textContent = user.email; startListeners(); }
   });
 
   /* ===== TABS ===== */
