@@ -1,893 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mountain Travels | Enterprise Dispatch Control Center</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0d2215" />
+<title>Admin | Mountain Travels</title>
+<link rel="icon" href="Mountain.png" type="image/png" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--dark:#0d2215;--green:#143522;--tint:#edf7f0;--gold:#e5a408;--blue:#3d80b4;--bg:#f4f7f5;--line:#e2e8f0;--mut:#55695d;--red:#dc2626;--ok:#15803d;--white:#fff;
+--hd:'Cinzel',Georgia,serif;--bd:'Plus Jakarta Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--bd);background:var(--bg);color:var(--dark);font-size:.9rem;line-height:1.5}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2.5px solid var(--blue);outline-offset:2px}
+.hidden{display:none!important}
 
-  <!-- Google Fonts & Font Awesome Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+/* LOGIN */
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.25rem;background:linear-gradient(160deg,var(--dark),var(--green))}
+.login-card{background:#fff;width:100%;max-width:400px;border-radius:16px;padding:2rem 1.5rem;border-top:4px solid var(--gold);box-shadow:0 20px 45px rgba(0,0,0,.4)}
+.login-card h1{font-family:var(--hd);color:var(--green);font-size:1.3rem;text-align:center;margin:.4rem 0 .2rem}
+.login-card p.sub{text-align:center;color:var(--mut);font-size:.8rem;margin-bottom:1.25rem}
+.field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.85rem}
+.field label{font-size:.74rem;font-weight:700;text-transform:uppercase}
+.field input,.field select{height:44px;padding:0 .85rem;border:1.5px solid #cbe0f0;border-radius:8px;font:inherit;background:#fbfdff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;height:42px;padding:0 1.1rem;border:none;border-radius:8px;background:#1F7A3D;color:#fff;font-weight:700;font-size:.85rem}
+.btn:hover{background:var(--green)}
+.btn.full{width:100%}
+.btn.ghost{background:#fff;color:var(--green);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--tint)}
+.btn.sm{height:34px;padding:0 .8rem;font-size:.78rem}
+.btn.danger{background:#fff;color:var(--red);border:1px solid #fecaca}
+.btn.danger:hover{background:#fef2f2}
+.btn:disabled{opacity:.6;cursor:wait}
+.logo-box{background:var(--dark);border-radius:12px;padding:.6rem;display:flex;justify-content:center;margin-bottom:.9rem}
+.logo-img{height:64px;width:auto;max-width:100%;object-fit:contain;mix-blend-mode:screen}
+.side .brand{padding:.1rem .4rem 1rem}
+.side .logo-img{height:48px}
+.msg{display:none;font-size:.78rem;font-weight:600;padding:.5rem .7rem;border-radius:6px;margin-bottom:.85rem;color:var(--red);background:#fef2f2;border:1px solid #fecaca}
 
-  <style>
-    :root {
-      --forest-dark: #0d2215;
-      --forest-green: #143522;
-      --forest-card: #1b412b;
-      --forest-tint: #edf7f0;
-      --sky-blue: #3d80b4;
-      --sunlight-yellow: #e5a408;
-      --slate-100: #f1f5f9;
-      --slate-200: #e2e8f0;
-      --slate-600: #475569;
-      --slate-700: #334155;
-      --white: #ffffff;
-      --radius-lg: 12px;
-      --shadow: 0 4px 16px rgba(13, 34, 21, 0.08);
-      --font-heading: 'Cinzel', Georgia, serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
-    }
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.side{width:230px;background:var(--dark);color:#cbdad1;padding:1.25rem .9rem;display:flex;flex-direction:column;gap:.3rem;position:sticky;top:0;height:100vh;border-right:2px solid var(--gold)}
+.side .brand{font-family:var(--hd);color:#fff;font-size:1.05rem;padding:.25rem .6rem 1rem;display:flex;align-items:center;gap:.5rem}
+.side .brand i{color:var(--gold)}
+.nav{display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border-radius:8px;background:none;border:none;color:inherit;font-weight:600;font-size:.86rem;text-align:left;width:100%}
+.nav:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav.on{background:var(--gold);color:var(--dark)}
+.nav i{width:18px;text-align:center}
+.side .spacer{flex:1}
+.main{flex:1;min-width:0;padding:1.5rem}
+.top{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.top h2{font-family:var(--hd);font-size:1.4rem;color:var(--green)}
+.who{font-size:.78rem;color:var(--mut)}
+.tabbar{display:none}
+@media(max-width:860px){
+ .side{display:none}
+ .main{padding:1rem 1rem 5.5rem}
+ .tabbar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--dark);border-top:2px solid var(--gold);padding-bottom:env(safe-area-inset-bottom,0)}
+ .tabbar button{flex:1;background:none;border:none;color:#9cb5a5;padding:.55rem 0;font-size:.65rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:.2rem}
+ .tabbar button i{font-size:1.05rem}
+ .tabbar button.on{color:var(--gold)}
+}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: var(--font-body);
-    }
+/* CARDS */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1.25rem}
+@media(min-width:860px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:12px;padding:1rem}
+.stat .n{font-family:var(--hd);font-size:1.7rem;color:var(--green);line-height:1.1}
+.stat .l{font-size:.76rem;color:var(--mut);margin-top:.2rem}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.1rem;margin-bottom:1rem}
+.panel h3{font-size:.95rem;margin-bottom:.7rem}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.6rem}
+.links a{display:flex;align-items:center;gap:.6rem;padding:.7rem .8rem;border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--green);font-weight:600;font-size:.82rem}
+.links a:hover{background:var(--tint)}
 
-    body {
-      background-color: #f8fafc;
-      color: var(--forest-dark);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #loginGate {
-      position: fixed;
-      inset: 0;
-      background: rgba(13, 34, 21, 0.96);
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 1.5rem;
-    }
-
-    .login-box {
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      padding: 2.2rem 2rem;
-      width: 100%;
-      max-width: 400px;
-      border-top: 4px solid var(--sunlight-yellow);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-      text-align: center;
-    }
-
-    .login-box h2 {
-      font-family: var(--font-heading);
-      font-size: 1.35rem;
-      color: var(--forest-green);
-      margin-bottom: 0.4rem;
-    }
-
-    .login-box p {
-      font-size: 0.82rem;
-      color: #64748b;
-      margin-bottom: 1.5rem;
-    }
-
-    .input-field, .select-field {
-      width: 100%;
-      height: 42px;
-      padding: 0 0.85rem;
-      border: 1.5px solid var(--slate-200);
-      border-radius: 8px;
-      font-size: 0.88rem;
-      outline: none;
-      background: #fff;
-    }
-
-    .input-field:focus, .select-field:focus {
-      border-color: var(--forest-green);
-    }
-
-    .btn-admin {
-      width: 100%;
-      height: 44px;
-      border-radius: 8px;
-      border: none;
-      background: #1F7A3D;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: background 0.2s ease;
-    }
-
-    .btn-admin:hover {
-      background: #166534;
-    }
-
-    .admin-navbar {
-      height: 64px;
-      background: var(--forest-dark);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.5rem;
-      border-bottom: 2px solid var(--sunlight-yellow);
-    }
-
-    .brand-title {
-      font-family: var(--font-heading);
-      font-size: 1.15rem;
-      letter-spacing: 0.5px;
-      color: var(--sunlight-yellow);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .btn-sm-action {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff;
-      padding: 0.4rem 0.85rem;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .btn-sm-action:hover {
-      background: rgba(255, 255, 255, 0.22);
-    }
-
-    .content-container {
-      max-width: 1400px;
-      margin: 1.5rem auto;
-      padding: 0 1.25rem;
-      width: 100%;
-      flex: 1;
-    }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.8rem;
-    }
-
-    .metric-card {
-      background: #fff;
-      border-radius: var(--radius-lg);
-      padding: 1.25rem;
-      border: 1px solid var(--slate-200);
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .metric-info span {
-      font-size: 0.74rem;
-      color: #64748b;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .metric-info h3 {
-      font-size: 1.5rem;
-      color: var(--forest-green);
-      margin-top: 0.2rem;
-    }
-
-    .metric-icon-wrap {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: var(--forest-tint);
-      color: var(--forest-green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-    }
-
-    .dashboard-panel {
-      background: #fff;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--slate-200);
-      box-shadow: var(--shadow);
-      margin-bottom: 2rem;
-      overflow: hidden;
-    }
-
-    .panel-header {
-      padding: 1rem 1.25rem;
-      background: #fafcfe;
-      border-bottom: 1px solid var(--slate-200);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-    }
-
-    .panel-header h3 {
-      font-size: 0.98rem;
-      font-weight: 700;
-      color: var(--forest-dark);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .table-controls {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .search-input {
-      height: 34px;
-      padding: 0 0.75rem;
-      border-radius: 6px;
-      border: 1px solid var(--slate-200);
-      font-size: 0.8rem;
-      outline: none;
-      width: 180px;
-    }
-
-    .table-responsive {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.82rem;
-    }
-
-    th {
-      background: #f1f5f9;
-      color: var(--slate-700);
-      padding: 0.85rem 1rem;
-      font-weight: 700;
-      border-bottom: 1.5px solid var(--slate-200);
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--slate-200);
-      vertical-align: middle;
-    }
-
-    tr:hover {
-      background: #fbfdff;
-    }
-
-    .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.22rem 0.55rem;
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .status-confirmed { background: #dcfce7; color: #15803d; }
-    .status-pending { background: #fef3c7; color: #92400e; }
-    .status-cancelled { background: #fee2e2; color: #b91c1c; }
-    .status-postponed { background: #e0f2fe; color: #0369a1; }
-
-    .epass-ready { color: #16a34a; font-weight: 700; }
-    .epass-pending { color: #ca8a04; font-weight: 700; }
-
-    .action-icons {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .icon-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #f1f5f9;
-      color: var(--slate-700);
-      border: 1px solid var(--slate-200);
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-
-    .icon-btn:hover {
-      background: var(--forest-tint);
-      color: var(--forest-green);
-    }
-
-    .icon-btn.wa {
-      background: #25d366;
-      color: #fff;
-      border: none;
-    }
-
-    .dispatch-split {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    @media (min-width: 900px) {
-      .dispatch-split {
-        grid-template-columns: 1.1fr 0.9fr;
-      }
-    }
-
-    .driver-card-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--slate-200);
-    }
-
-    .driver-card-row:last-child {
-      border-bottom: none;
-    }
-
-    .driver-avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--forest-tint);
-      color: var(--forest-green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
-
-    .photo-manager-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
-      padding: 1.25rem;
-    }
-
-    .photo-slot-card {
-      border: 1px solid var(--slate-200);
-      border-radius: 8px;
-      padding: 0.85rem;
-      background: #fafcfe;
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-    }
-
-    .slot-thumb {
-      height: 120px;
-      width: 100%;
-      border-radius: 6px;
-      overflow: hidden;
-      background: #0d2215;
-    }
-
-    .slot-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .slot-meta {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--forest-dark);
-    }
-  </style>
+.toolbar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.chip{padding:.4rem .9rem;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:.78rem;font-weight:700;color:#334155}
+.chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+.rev{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:.8rem}
+.rev-h{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:flex-start}
+.rev-n{font-weight:700}
+.rev-d{font-size:.72rem;color:var(--mut)}
+.stars{color:#fbbc04;font-size:.8rem;margin:.25rem 0}
+.stars .off{color:#d5dbe3}
+.rev p{font-size:.84rem;color:#334155;margin:.4rem 0 .8rem;word-break:break-word}
+.rev-a{display:flex;gap:.5rem;flex-wrap:wrap}
+.badge{font-size:.68rem;font-weight:700;padding:.18rem .55rem;border-radius:999px}
+.badge.pend{background:#fef3c7;color:#92400e}
+.badge.live{background:#dcfce7;color:var(--ok)}
+.empty{text-align:center;color:var(--mut);padding:2rem 1rem;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;font-size:.84rem}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.8rem}
+th,td{padding:.65rem .8rem;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--green)}
+.toast{position:fixed;left:50%;bottom:5rem;transform:translateX(-50%);background:var(--dark);color:#fff;padding:.6rem 1rem;border-radius:8px;font-size:.8rem;font-weight:600;z-index:99;border-left:3px solid var(--gold);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
 
-  <!-- ================= PASSCODE PROTECTION ================= -->
-  <div id="loginGate">
-    <div class="login-box">
-      <i class="fa-solid fa-mountain-sun" style="font-size: 2.2rem; color: var(--sunlight-yellow); margin-bottom: 0.5rem;"></i>
-      <h2>Dispatch Control</h2>
-      <p>Enter Master Passcode to manage Nilgiris bookings and website media.</p>
-      <input type="password" id="adminPassInput" class="input-field" placeholder="Enter Passcode (Default: admin123)" autofocus />
-      <button type="button" class="btn-admin" onclick="authenticateAdmin()" style="margin-top:0.75rem;">
-        <i class="fa-solid fa-lock-open"></i> Access Dashboard
-      </button>
-    </div>
-  </div>
+<!-- LOGIN -->
+<div class="login" id="loginView">
+  <form class="login-card" id="loginForm" novalidate>
+    <div class="logo-box"><img src="Mountain.png" alt="Mountain Travels" class="logo-img"></div>
+    <h1>Admin Login</h1>
+    <p class="sub">Sign in with your admin mobile number.</p>
+    <div class="msg" id="loginErr" role="alert"></div>
+    <div class="field"><label for="email">Mobile number</label><input id="email" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number" autocomplete="username" required></div>
+    <div class="field"><label for="pass">Password</label><input id="pass" type="password" autocomplete="current-password" required></div>
+    <button class="btn full" id="loginBtn" type="submit"><i class="fa-solid fa-lock"></i> Sign in</button>
+  </form>
+</div>
 
-  <!-- ================= TOP ADMIN NAVIGATION ================= -->
-  <header class="admin-navbar">
-    <div class="brand-title">
-      <i class="fa-solid fa-leaf"></i> MOUNTAIN TRAVELS <span>DISPATCH CONTROL</span>
-    </div>
-    <div class="nav-actions">
-      <button class="btn-sm-action" onclick="exportDispatchCSV()">
-        <i class="fa-solid fa-file-csv"></i> Export Roster
-      </button>
-      <a href="index.html" class="btn-sm-action" target="_blank">
-        <i class="fa-solid fa-up-right-from-square"></i> Live Website
-      </a>
-      <button class="btn-sm-action" onclick="adminLogout()">
-        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
-      </button>
-    </div>
-  </header>
+<!-- APP -->
+<div class="app hidden" id="appView">
+  <aside class="side">
+    <div class="brand"><img src="Mountain.png" alt="Mountain Travels" class="logo-img"></div>
+    <button class="nav on" data-tab="overview"><i class="fa-solid fa-gauge"></i> Overview</button>
+    <button class="nav" data-tab="reviews"><i class="fa-solid fa-star"></i> Reviews</button>
+    <button class="nav" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Bookings</button>
+    <button class="nav" data-tab="customers"><i class="fa-solid fa-users"></i> Customers</button>
+    <div class="spacer"></div>
+    <a class="nav" href="index.html" style="text-decoration:none"><i class="fa-solid fa-arrow-up-right-from-square"></i> View website</a>
+    <button class="nav" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button>
+  </aside>
 
-  <!-- ================= DASHBOARD BODY ================= -->
-  <main class="content-container">
-
-    <!-- KPI Metric Cards -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="metric-info">
-          <span>Active Bookings</span>
-          <h3 id="statTotalBookings">0</h3>
-        </div>
-        <div class="metric-icon-wrap"><i class="fa-solid fa-car-side"></i></div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-info">
-          <span>Active Chauffeurs</span>
-          <h3>5 On Duty</h3>
-        </div>
-        <div class="metric-icon-wrap"><i class="fa-solid fa-user-shield"></i></div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-info">
-          <span>E-Pass Verified</span>
-          <h3 style="color:#16a34a;" id="statEpassCount">100%</h3>
-        </div>
-        <div class="metric-icon-wrap"><i class="fa-solid fa-id-card"></i></div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-info">
-          <span>Pending Modifications</span>
-          <h3 style="color:#d97706;" id="statPendingModCount">1</h3>
-        </div>
-        <div class="metric-icon-wrap"><i class="fa-solid fa-arrows-rotate"></i></div>
-      </div>
+  <main class="main">
+    <div class="top">
+      <h2 id="pageTitle">Overview</h2>
+      <div class="who" id="who"></div>
     </div>
 
-    <!-- Active Reservations Table -->
-    <div class="dashboard-panel">
-      <div class="panel-header">
-        <h3><i class="fa-solid fa-calendar-check" style="color:var(--forest-green)"></i> Nilgiris Fleet Reservation Roster</h3>
-        
-        <div class="table-controls">
-          <input type="text" id="bookingSearchInput" class="search-input" placeholder="Search name/phone..." onkeyup="filterBookingsTable()" />
-          
-          <select id="statusFilter" class="search-input" style="width:130px;" onchange="filterBookingsTable()">
-            <option value="ALL">All Status</option>
-            <option value="Confirmed">Confirmed</option>
-            <option value="Pending">Pending</option>
-            <option value="Postponed">Postponed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-
-          <button class="btn-sm-action" style="background:var(--forest-green); height:34px;" onclick="refreshBookingsTable()">
-            <i class="fa-solid fa-rotate"></i> Refresh
-          </button>
+    <section id="tab-overview">
+      <div class="stats">
+        <div class="stat"><div class="n" id="sTotal">0</div><div class="l">Total reviews</div></div>
+        <div class="stat"><div class="n" id="sPending">0</div><div class="l">Waiting for approval</div></div>
+        <div class="stat"><div class="n" id="sAvg">-</div><div class="l">Average rating (live)</div></div>
+        <div class="stat"><div class="n" id="sBook">0</div><div class="l">Bookings saved</div></div>
+      </div>
+      <div class="panel">
+        <h3>Quick actions</h3>
+        <div class="links">
+          <a href="tel:+919360543120"><i class="fa-solid fa-phone"></i> Call dispatcher</a>
+          <a href="https://wa.me/919360543120" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i> Open WhatsApp</a>
+          <a href="mailto:reservations.mountaintravels@gmail.com"><i class="fa-solid fa-envelope"></i> Email bookings desk</a>
+          <a href="index.html#reserve"><i class="fa-solid fa-car-side"></i> Booking form</a>
+          <a href="index.html#reviews"><i class="fa-solid fa-comments"></i> Reviews on site</a>
+          <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-fire"></i> Firebase console</a>
         </div>
       </div>
+    </section>
 
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>Trip ID & Date</th>
-              <th>Customer</th>
-              <th>Contact Details</th>
-              <th>Circuit & Pickup Point</th>
-              <th>Fleet Model</th>
-              <th>TN E-Pass</th>
-              <th>Status</th>
-              <th>Chauffeur</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="bookingsTableBody">
-            <!-- Rendered dynamically -->
-          </tbody>
-        </table>
+    <section id="tab-reviews" class="hidden">
+      <div class="toolbar" id="revFilters">
+        <button class="chip on" data-f="pending">Pending</button>
+        <button class="chip" data-f="live">Approved</button>
+        <button class="chip" data-f="all">All</button>
       </div>
-    </div>
+      <div id="revList"></div>
+    </section>
 
-    <!-- Split Operations Section: Postpone/Cancel Queue & Chauffeur Allocation -->
-    <div class="dispatch-split">
-      <div class="dashboard-panel">
-        <div class="panel-header">
-          <h3><i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--forest-green)"></i> Trip Modification Requests</h3>
-          <span style="font-size:0.75rem; color:#64748b;">Postpone & Cancellation Action Desk</span>
-        </div>
+    <section id="tab-bookings" class="hidden">
+      <div class="toolbar"><button class="btn ghost sm" id="csvBookings"><i class="fa-solid fa-download"></i> Export CSV</button></div>
+      <div id="bookList"></div>
+    </section>
 
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Request Type</th>
-                <th>Details</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="modificationsQueueBody">
-              <!-- Rendered via JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="dashboard-panel">
-        <div class="panel-header">
-          <h3><i class="fa-solid fa-steering-wheel" style="color:var(--forest-green)"></i> Certified Hill Chauffeurs</h3>
-          <span style="font-size:0.75rem; color:#16a34a; font-weight:700;">Ghat Road Verified</span>
-        </div>
-
-        <div>
-          <div class="driver-card-row">
-            <div style="display:flex; align-items:center; gap:0.75rem;">
-              <div class="driver-avatar">MM</div>
-              <div>
-                <strong style="font-size:0.86rem;">Murugan M.</strong><br>
-                <small style="color:#64748b;">Innova HyCross (TN 43 E 8821) • 12 Yrs Exp</small>
-              </div>
-            </div>
-            <span class="badge-status status-confirmed">On Trip</span>
-          </div>
-
-          <div class="driver-card-row">
-            <div style="display:flex; align-items:center; gap:0.75rem;">
-              <div class="driver-avatar">SK</div>
-              <div>
-                <strong style="font-size:0.86rem;">Senthil Kumar</strong><br>
-                <small style="color:#64748b;">Tempo Traveller (TN 43 H 1902) • Ghat Certified</small>
-              </div>
-            </div>
-            <span class="badge-status" style="background:#e0f2fe; color:#0369a1;">Standby (CJB)</span>
-          </div>
-
-          <div class="driver-card-row">
-            <div style="display:flex; align-items:center; gap:0.75rem;">
-              <div class="driver-avatar">AR</div>
-              <div>
-                <strong style="font-size:0.86rem;">Anand Raj</strong><br>
-                <small style="color:#64748b;">Fortuner 4x4 (TN 43 J 5400) • Offbeat Safari</small>
-              </div>
-            </div>
-            <span class="badge-status status-confirmed">On Trip</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Live Website Photo & Banner Manager -->
-    <div class="dashboard-panel">
-      <div class="panel-header">
-        <h3><i class="fa-solid fa-image" style="color:var(--forest-green)"></i> Website Photo & Fleet Asset Manager</h3>
-        <span style="font-size:0.75rem; color:#64748b;">Changes update live across all customer devices</span>
-      </div>
-
-      <div class="photo-manager-grid">
-        <div class="photo-slot-card">
-          <div class="slot-meta">Doddabetta Peak Banner</div>
-          <div class="slot-thumb"><img id="preview-doddabetta" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
-          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-place-doddabetta', 'preview-doddabetta', event)">
-        </div>
-
-        <div class="photo-slot-card">
-          <div class="slot-meta">Pykara Falls & Lake</div>
-          <div class="slot-thumb"><img id="preview-pykara" src="https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
-          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-place-pykara', 'preview-pykara', event)">
-        </div>
-
-        <div class="photo-slot-card">
-          <div class="slot-meta">Innova HyCross Luxury</div>
-          <div class="slot-thumb"><img id="preview-hycross" src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
-          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-veh-hycross', 'preview-hycross', event)">
-        </div>
-
-        <div class="photo-slot-card">
-          <div class="slot-meta">Tempo Traveller (12/14)</div>
-          <div class="slot-thumb"><img id="preview-urbania" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=750&q=80" alt="Preview"></div>
-          <input type="file" accept="image/*" class="input-field" style="margin-bottom:0.4rem; padding-top:0.35rem;" onchange="handleAdminPhotoReplace('img-veh-urbania', 'preview-urbania', event)">
-        </div>
-      </div>
-    </div>
+    <section id="tab-customers" class="hidden">
+      <div class="toolbar"><button class="btn ghost sm" id="csvCustomers"><i class="fa-solid fa-download"></i> Export CSV</button></div>
+      <div id="custList"></div>
+    </section>
   </main>
+</div>
 
-  <!-- ================= JAVASCRIPT OPERATIONS ================= -->
-  <script>
-    function authenticateAdmin() {
-      const pass = document.getElementById('adminPassInput').value;
-      if (pass === 'admin123') {
-        sessionStorage.setItem('mt_admin_session', 'active');
-        document.getElementById('loginGate').style.display = 'none';
-        initAdminDashboard();
-      } else {
-        alert('Incorrect Master Passcode.');
-      }
+<nav class="tabbar hidden" id="tabbar" aria-label="Admin navigation">
+  <button class="on" data-tab="overview"><i class="fa-solid fa-gauge"></i>Overview</button>
+  <button data-tab="reviews"><i class="fa-solid fa-star"></i>Reviews</button>
+  <button data-tab="bookings"><i class="fa-solid fa-calendar-check"></i>Bookings</button>
+  <button data-tab="customers"><i class="fa-solid fa-users"></i>Customers</button>
+  <button id="logoutBtn2"><i class="fa-solid fa-right-from-bracket"></i>Sign out</button>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ===== SETTINGS ===== */
+  // 1) Paste the SAME Firebase web config that is inside your script.js
+  var FIREBASE_CONFIG = {
+    apiKey: 'PASTE_API_KEY',
+    authDomain: 'PASTE_PROJECT.firebaseapp.com',
+    projectId: 'PASTE_PROJECT_ID',
+    appId: 'PASTE_APP_ID'
+  };
+  // 2) Only these mobile numbers can use the admin (also enforce this in Firestore rules)
+  var ADMIN_PHONES = ['9360543120'];
+  var LOGIN_DOMAIN = '@admin.mountaintravels.in'; // Firebase user email = mobile + this
+  // 3) Firestore collection names. Bookings/customers show once your site saves to them.
+  var COL = { reviews: 'reviews', bookings: 'bookings', customers: 'users' };
+
+  /* ===== SETUP ===== */
+  var $ = function (id) { return document.getElementById(id); };
+  var db, auth, unsubs = [];
+  var reviews = [], bookings = [], customers = [], filter = 'pending';
+
+  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  auth = firebase.auth();
+  db = firebase.firestore();
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined && text !== null) n.textContent = text;
+    return n;
+  }
+  function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+  var toastT;
+  function toast(m) {
+    var t = $('toast'); t.textContent = m; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  }
+  function fmtDate(v) {
+    if (v && typeof v.toDate === 'function') v = v.toDate();
+    if (!(v instanceof Date)) return '';
+    return v.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+
+  /* ===== LOGIN ===== */
+  function loginErr(m) { var b = $('loginErr'); b.textContent = m; b.style.display = m ? 'block' : 'none'; }
+
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var phone = $('email').value.replace(/\D/g, ''), pass = $('pass').value;
+    if (!/^[6-9][0-9]{9}$/.test(phone)) { loginErr('Enter a valid 10-digit mobile number.'); return; }
+    if (!pass) { loginErr('Enter your password.'); return; }
+    var email = phone + LOGIN_DOMAIN;
+    loginErr('');
+    var btn = $('loginBtn'); btn.disabled = true;
+    auth.signInWithEmailAndPassword(email, pass).catch(function (err) {
+      var bad = ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'];
+      loginErr(bad.indexOf(err.code) > -1 ? 'Mobile number or password is incorrect.' : 'Sign in failed: ' + (err.code || err.message));
+    }).then(function () { btn.disabled = false; });
+  });
+
+  function signOut() { auth.signOut(); }
+  $('logoutBtn').addEventListener('click', signOut);
+  $('logoutBtn2').addEventListener('click', signOut);
+
+  auth.onAuthStateChanged(function (user) {
+    unsubs.forEach(function (u) { u(); }); unsubs = [];
+    var phoneId = user && user.email ? user.email.split('@')[0] : '';
+    var allowed = user && user.email && user.email.toLowerCase().slice(-LOGIN_DOMAIN.length) === LOGIN_DOMAIN && ADMIN_PHONES.indexOf(phoneId) > -1;
+    if (user && !allowed) {
+      auth.signOut(); loginErr('This account does not have admin access.'); return;
     }
+    $('loginView').classList.toggle('hidden', !!user);
+    $('appView').classList.toggle('hidden', !user);
+    $('tabbar').classList.toggle('hidden', !user);
+    if (user) { $('who').textContent = '+91 ' + phoneId; startListeners(); }
+  });
 
-    function checkAdminSession() {
-      if (sessionStorage.getItem('mt_admin_session') === 'active') {
-        document.getElementById('loginGate').style.display = 'none';
-        initAdminDashboard();
-      }
+  /* ===== TABS ===== */
+  var TITLES = { overview: 'Overview', reviews: 'Reviews', bookings: 'Bookings', customers: 'Customers' };
+  function showTab(name) {
+    ['overview', 'reviews', 'bookings', 'customers'].forEach(function (t) {
+      $('tab-' + t).classList.toggle('hidden', t !== name);
+    });
+    document.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === name); });
+    $('pageTitle').textContent = TITLES[name];
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-tab]').forEach(function (b) {
+    b.addEventListener('click', function () { showTab(b.getAttribute('data-tab')); });
+  });
+
+  /* ===== LIVE DATA ===== */
+  function listen(name, cb) {
+    var u = db.collection(COL[name]).limit(300).onSnapshot(function (snap) {
+      var rows = [];
+      snap.forEach(function (d) { var o = d.data(); o.id = d.id; rows.push(o); });
+      rows.sort(function (a, b) { return time(b) - time(a); });
+      cb(rows);
+    }, function (err) {
+      console.warn('[Admin] ' + name + ':', err.code || err.message);
+      if (name === 'reviews') toast('Cannot read reviews: ' + (err.code || err.message));
+      cb([]);
+    });
+    unsubs.push(u);
+  }
+  function time(o) {
+    var v = o.createdAt || o.timestamp;
+    return v && typeof v.toDate === 'function' ? v.toDate().getTime() : 0;
+  }
+
+  function startListeners() {
+    listen('reviews', function (r) { reviews = r; renderReviews(); renderStats(); });
+    listen('bookings', function (r) { bookings = r; renderTable($('bookList'), r, 'No bookings saved yet. Your site currently sends bookings to WhatsApp.'); renderStats(); });
+    listen('customers', function (r) { customers = r; renderTable($('custList'), r, 'No registered customers found.'); });
+  }
+
+  function renderStats() {
+    var live = reviews.filter(function (r) { return r.approved === true; });
+    $('sTotal').textContent = reviews.length;
+    $('sPending').textContent = reviews.length - live.length;
+    $('sBook').textContent = bookings.length;
+    var avg = live.length ? live.reduce(function (s, r) { return s + (r.rating || 0); }, 0) / live.length : 0;
+    $('sAvg').textContent = live.length ? avg.toFixed(1) : '-';
+  }
+
+  /* ===== REVIEWS ===== */
+  document.querySelectorAll('#revFilters .chip').forEach(function (c) {
+    c.addEventListener('click', function () {
+      filter = c.getAttribute('data-f');
+      document.querySelectorAll('#revFilters .chip').forEach(function (x) { x.classList.toggle('on', x === c); });
+      renderReviews();
+    });
+  });
+
+  function renderReviews() {
+    var box = $('revList'); clear(box);
+    var rows = reviews.filter(function (r) {
+      return filter === 'all' || (filter === 'live' ? r.approved === true : r.approved !== true);
+    });
+    if (!rows.length) {
+      box.appendChild(el('div', 'empty', filter === 'pending' ? 'No reviews waiting for approval.' : 'No reviews here yet.'));
+      return;
     }
+    rows.forEach(function (r) {
+      var card = el('article', 'rev');
+      var h = el('div', 'rev-h');
+      var left = el('div');
+      left.appendChild(el('div', 'rev-n', r.name || 'Anonymous'));
+      left.appendChild(el('div', 'rev-d', fmtDate(r.createdAt)));
+      h.appendChild(left);
+      h.appendChild(el('span', 'badge ' + (r.approved ? 'live' : 'pend'), r.approved ? 'Live on site' : 'Pending'));
+      card.appendChild(h);
 
-    function adminLogout() {
-      sessionStorage.removeItem('mt_admin_session');
-      window.location.reload();
-    }
-
-    function getStoredBookings() {
-      let customBookings = JSON.parse(localStorage.getItem('mt_all_bookings') || '[]');
-      const latestSession = JSON.parse(sessionStorage.getItem('currentBooking') || 'null');
-
-      if (latestSession && !customBookings.some(b => b.phone === latestSession.phone && b.date === latestSession.date)) {
-        customBookings.unshift({
-          id: 'MT-' + Math.floor(1000 + Math.random() * 9000),
-          name: latestSession.name || 'Nilgiris Traveler',
-          phone: latestSession.phone || '9360543120',
-          email: latestSession.email || 'traveler@domain.com',
-          circuit: latestSession.circuit || 'Ooty Full Day Royal Circuit',
-          pickup: latestSession.pickup || 'Coimbatore Airport (CJB)',
-          vehicle: latestSession.vehicle || 'Toyota Innova HyCross Luxury',
-          date: latestSession.date || new Date().toISOString().split('T')[0],
-          epass: 'Verified',
-          chauffeur: 'Murugan M.',
-          status: 'Confirmed'
-        });
-        localStorage.setItem('mt_all_bookings', JSON.stringify(customBookings));
+      var stars = el('div', 'stars'); stars.setAttribute('role', 'img'); stars.setAttribute('aria-label', (r.rating || 0) + ' out of 5');
+      for (var i = 1; i <= 5; i++) {
+        var s = el('i', 'fa-solid fa-star' + (i <= r.rating ? '' : ' off')); s.setAttribute('aria-hidden', 'true'); stars.appendChild(s);
       }
+      card.appendChild(stars);
+      card.appendChild(el('p', null, r.text || ''));
 
-      if (customBookings.length === 0) {
-        customBookings = [
-          {
-            id: 'MT-8291',
-            name: 'Rajesh Kumar',
-            phone: '9840123456',
-            email: 'rajesh@gmail.com',
-            circuit: 'Ooty Full Day Royal Circuit',
-            pickup: 'Coimbatore Airport (CJB)',
-            vehicle: 'Toyota Innova HyCross Luxury',
-            date: new Date().toISOString().split('T')[0],
-            epass: 'Verified',
-            chauffeur: 'Murugan M.',
-            status: 'Confirmed'
-          },
-          {
-            id: 'MT-8292',
-            name: 'Swetha Priya',
-            phone: '9443219870',
-            email: 'swetha@yahoo.com',
-            circuit: 'Coonoor Heritage & Tea Trail',
-            pickup: 'Ooty Hotel / Resort',
-            vehicle: 'Executive Sedan (Dzire / Etios)',
-            date: new Date().toISOString().split('T')[0],
-            epass: 'Verified',
-            chauffeur: 'Anand Raj',
-            status: 'Confirmed'
-          }
-        ];
-        localStorage.setItem('mt_all_bookings', JSON.stringify(customBookings));
-      }
-
-      return customBookings;
-    }
-
-    function refreshBookingsTable() {
-      const bookings = getStoredBookings();
-      const tbody = document.getElementById('bookingsTableBody');
-      tbody.innerHTML = '';
-
-      document.getElementById('statTotalBookings').textContent = bookings.length;
-
-      bookings.forEach((b, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>
-            <strong>${b.date}</strong><br>
-            <span style="font-size:0.72rem; color:#64748b; font-weight:700;">${b.id || 'MT-100'}</span>
-          </td>
-          <td><strong>${b.name}</strong></td>
-          <td>
-            <a href="tel:${b.phone}" style="color:var(--forest-green); font-weight:700; text-decoration:none;">${b.phone}</a><br>
-            <span style="font-size:0.72rem; color:#64748b;">${b.email || 'N/A'}</span>
-          </td>
-          <td>
-            ${b.circuit}<br>
-            <small style="color:#64748b;"><i class="fa-solid fa-location-dot"></i> ${b.pickup}</small>
-          </td>
-          <td>${b.vehicle}</td>
-          <td>
-            <span class="${b.epass === 'Verified' ? 'epass-ready' : 'epass-pending'}">
-              <i class="fa-solid fa-circle-check"></i> ${b.epass || 'Verified'}
-            </span>
-          </td>
-          <td>
-            <select class="select-field" style="height:30px; font-size:0.75rem; width:110px;" onchange="updateBookingStatus(${index}, this.value)">
-              <option value="Confirmed" ${b.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="Pending" ${b.status === 'Pending' ? 'selected' : ''}>Pending</option>
-              <option value="Postponed" ${b.status === 'Postponed' ? 'selected' : ''}>Postponed</option>
-              <option value="Cancelled" ${b.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-          </td>
-          <td>
-            <select class="select-field" style="height:30px; font-size:0.75rem; width:120px;" onchange="assignChauffeur(${index}, this.value)">
-              <option value="Murugan M." ${b.chauffeur === 'Murugan M.' ? 'selected' : ''}>Murugan M.</option>
-              <option value="Senthil Kumar" ${b.chauffeur === 'Senthil Kumar' ? 'selected' : ''}>Senthil K.</option>
-              <option value="Anand Raj" ${b.chauffeur === 'Anand Raj' ? 'selected' : ''}>Anand Raj</option>
-              <option value="Unassigned" ${!b.chauffeur ? 'selected' : ''}>Unassigned</option>
-            </select>
-          </td>
-          <td>
-            <div class="action-icons">
-              <a href="https://wa.me/91${b.phone}?text=Hello%20${encodeURIComponent(b.name)},%20Mountain%20Travels%20Nilgiris%20Dispatch%20here%20regarding%20booking%20${b.id}:" 
-                 target="_blank" class="icon-btn wa" title="Chat on WhatsApp">
-                <i class="fa-brands fa-whatsapp"></i>
-              </a>
-              <button class="icon-btn" onclick="deleteBooking(${index})" title="Remove Record">
-                <i class="fa-solid fa-trash" style="color:#ef4444;"></i>
-              </button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
+      var a = el('div', 'rev-a');
+      var tog = el('button', 'btn sm' + (r.approved ? ' ghost' : ''));
+      tog.type = 'button';
+      tog.innerHTML = r.approved ? '<i class="fa-solid fa-eye-slash"></i> Hide from site' : '<i class="fa-solid fa-check"></i> Approve';
+      tog.addEventListener('click', function () {
+        tog.disabled = true;
+        db.collection(COL.reviews).doc(r.id).update({ approved: !r.approved })
+          .then(function () { toast(r.approved ? 'Review hidden' : 'Review approved'); })
+          .catch(function (e) { toast('Failed: ' + (e.code || e.message)); tog.disabled = false; });
       });
-
-      renderModificationsQueue();
-    }
-
-    function updateBookingStatus(index, newStatus) {
-      const bookings = getStoredBookings();
-      bookings[index].status = newStatus;
-      localStorage.setItem('mt_all_bookings', JSON.stringify(bookings));
-      refreshBookingsTable();
-    }
-
-    function assignChauffeur(index, chauffeurName) {
-      const bookings = getStoredBookings();
-      bookings[index].chauffeur = chauffeurName;
-      localStorage.setItem('mt_all_bookings', JSON.stringify(bookings));
-      alert(`Chauffeur ${chauffeurName} assigned to ${bookings[index].name}!`);
-    }
-
-    function deleteBooking(index) {
-      if (confirm('Delete this reservation entry permanently?')) {
-        const bookings = getStoredBookings();
-        bookings.splice(index, 1);
-        localStorage.setItem('mt_all_bookings', JSON.stringify(bookings));
-        refreshBookingsTable();
-      }
-    }
-
-    function renderModificationsQueue() {
-      const queueBody = document.getElementById('modificationsQueueBody');
-      queueBody.innerHTML = `
-        <tr>
-          <td><strong>Koushik S.</strong><br><small>+91 9360543120</small></td>
-          <td><span class="badge-status status-postponed">Postpone</span></td>
-          <td>Move from Today ➔ <strong>Tomorrow</strong><br><small style="color:#64748b;">Flight Delayed at CJB</small></td>
-          <td>
-            <button class="btn-sm-action" style="background:#166534;" onclick="approveModification('Koushik S.', '9360543120', 'Postpone Approved')">
-              Approve
-            </button>
-          </td>
-        </tr>
-      `;
-    }
-
-    function approveModification(name, phone, actionText) {
-      alert(`${actionText} for ${name}! Sending WhatsApp notification.`);
-      const msg = `Hello%20${encodeURIComponent(name)},%20your%20Mountain%20Travels%20trip%20modification%20request%20has%20been%20APPROVED.%20Chauffeur%20and%20vehicle%20stand%20confirmed.`;
-      window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
-    }
-
-    function filterBookingsTable() {
-      const query = document.getElementById('bookingSearchInput').value.toLowerCase();
-      const statusFilter = document.getElementById('statusFilter').value;
-      const rows = document.querySelectorAll('#bookingsTableBody tr');
-
-      rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        const matchesQuery = text.includes(query);
-        const matchesStatus = (statusFilter === 'ALL') || text.includes(statusFilter.toLowerCase());
-
-        if (matchesQuery && matchesStatus) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
+      var del = el('button', 'btn sm danger'); del.type = 'button';
+      del.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+      del.addEventListener('click', function () {
+        if (!confirm('Delete this review permanently?')) return;
+        db.collection(COL.reviews).doc(r.id).delete()
+          .then(function () { toast('Review deleted'); })
+          .catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
       });
-    }
+      a.appendChild(tog); a.appendChild(del);
+      card.appendChild(a);
+      box.appendChild(card);
+    });
+  }
 
-    function exportDispatchCSV() {
-      const bookings = getStoredBookings();
-      let csvContent = "data:text/csv;charset=utf-8,Trip ID,Date,Name,Phone,Circuit,Vehicle,Status,Chauffeur\n";
-
-      bookings.forEach(b => {
-        csvContent += `"${b.id}","${b.date}","${b.name}","${b.phone}","${b.circuit}","${b.vehicle}","${b.status}","${b.chauffeur || 'N/A'}"\n`;
-      });
-
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Nilgiris_Dispatch_Roster_${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function handleAdminPhotoReplace(targetKey, previewImgId, event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64 = e.target.result;
-        document.getElementById(previewImgId).src = base64;
-
-        let customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');[cite: 1]
-        customImages[targetKey] = base64;
-        localStorage.setItem('mt_custom_images', JSON.stringify(customImages));[cite: 1]
-        alert('Image updated! It will reflect automatically across all customer devices.');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function syncExistingImages() {
-      const customImages = JSON.parse(localStorage.getItem('mt_custom_images') || '{}');[cite: 1]
-      if (customImages['img-place-doddabetta']) document.getElementById('preview-doddabetta').src = customImages['img-place-doddabetta'];
-      if (customImages['img-place-pykara']) document.getElementById('preview-pykara').src = customImages['img-place-pykara'];
-      if (customImages['img-veh-hycross']) document.getElementById('preview-hycross').src = customImages['img-veh-hycross'];
-      if (customImages['img-veh-urbania']) document.getElementById('preview-urbania').src = customImages['img-veh-urbania'];
-    }
-
-    function initAdminDashboard() {
-      refreshBookingsTable();
-      syncExistingImages();
-    }
-
-    window.onload = function() {
-      checkAdminSession();
-    };
-  </script>
+  /* ===== GENERIC TABLES + CSV ===== */
+  function cols(rows) {
+    var set = {};
+    rows.forEach(function (r) { Object.keys(r).forEach(function (k) { if (k !== 'id') set[k] = 1; }); });
+    return Object.keys(set);
+  }
+  function cell(v) {
+    if (v && typeof v.toDate === 'function') return fmtDate(v);
+    if (v === null || v === undefined) return '';
+    if (typeof v === 'object') return JSON.stringify(v);
+    return String(v);
+  }
+  function renderTable(box, rows, emptyMsg) {
+    clear(box);
+    if (!rows.length) { box.appendChild(el('div', 'empty', emptyMsg)); return; }
+    var c = cols(rows);
+    var wrap = el('div', 'tw'), t = el('table'), thead = el('thead'), hr = el('tr');
+    c.forEach(function (k) { hr.appendChild(el('th', null, k)); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb = el('tbody');
+    rows.forEach(function (r) {
+      var tr = el('tr');
+      c.forEach(function (k) { var td = el('td', null, cell(r[k])); td.title = cell(r[k]); tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); wrap.appendChild(t); box.appendChild(wrap);
+  }
+  function exportCsv(rows, name) {
+    if (!rows.length) { toast('Nothing to export'); return; }
+    var c = cols(rows);
+    var esc = function (v) { v = cell(v).replace(/"/g, '""'); return /^[=+\-@]/.test(v) ? '"\'' + v + '"' : '"' + v + '"'; };
+    var lines = [c.map(esc).join(',')].concat(rows.map(function (r) { return c.map(function (k) { return esc(r[k]); }).join(','); }));
+    var blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+  $('csvBookings').addEventListener('click', function () { exportCsv(bookings, 'bookings'); });
+  $('csvCustomers').addEventListener('click', function () { exportCsv(customers, 'customers'); });
+})();
+</script>
 </body>
 </html>
