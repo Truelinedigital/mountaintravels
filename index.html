@@ -1517,6 +1517,164 @@
       color: var(--sunlight-yellow);
     }
 
+    /* WEEKLY WEATHER REPORT */
+    .weekly-forecast {
+      margin-bottom: 2rem;
+    }
+
+    .wf-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .wf-header .wcalc-subtitle {
+      margin-bottom: 0;
+    }
+
+    .wf-tabs {
+      display: inline-flex;
+      gap: 0.4rem;
+    }
+
+    .wf-tab {
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(229, 164, 8, 0.45);
+      background: transparent;
+      color: #cbdad1;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .wf-tab:hover {
+      color: var(--white);
+      border-color: var(--sunlight-yellow);
+    }
+
+    .wf-tab.active {
+      background: var(--sunlight-yellow);
+      border-color: var(--sunlight-yellow);
+      color: var(--forest-dark);
+    }
+
+    .wf-status {
+      font-size: 0.8rem;
+      color: #cbdad1;
+      padding: 0.5rem 0 0.75rem;
+    }
+
+    .wf-grid {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 0.5rem;
+      scrollbar-width: none;
+    }
+
+    .wf-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (min-width: 900px) {
+      .wf-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        overflow-x: visible;
+        padding-bottom: 0;
+      }
+    }
+
+    .wf-day {
+      flex: 0 0 132px;
+      min-width: 132px;
+      scroll-snap-align: start;
+      background: linear-gradient(160deg, #183e29, #0d2215);
+      border: 1px solid rgba(229, 164, 8, 0.25);
+      border-radius: 12px;
+      padding: 0.9rem 0.7rem;
+      color: var(--white);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    @media (min-width: 900px) {
+      .wf-day {
+        flex: initial;
+        min-width: 0;
+      }
+    }
+
+    .wf-day.today {
+      border-color: var(--sunlight-yellow);
+      box-shadow: 0 0 0 1px rgba(229, 164, 8, 0.35);
+    }
+
+    .wf-day-name {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .wf-day-date {
+      font-size: 0.7rem;
+      color: var(--sunlight-yellow);
+    }
+
+    .wf-day-icon {
+      font-size: 1.6rem;
+      margin: 0.3rem 0;
+    }
+
+    .wf-day-high {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .wf-day-low {
+      font-size: 0.74rem;
+      color: var(--sunlight-yellow);
+    }
+
+    .wf-day-cond {
+      font-size: 0.74rem;
+      color: #bbf2d6;
+      line-height: 1.3;
+      min-height: 2em;
+    }
+
+    .wf-day-meta {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 6px;
+      padding: 0.45rem 0.55rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.72rem;
+      color: #cbdad1;
+      text-align: left;
+      margin-top: 0.2rem;
+    }
+
+    .wf-source {
+      font-size: 0.7rem;
+      color: #9cb5a5;
+      margin-top: 0.9rem;
+    }
+
     /* CUSTOMER REVIEW FORM (rating + note) */
     .form-textarea {
       height: auto;
@@ -2116,6 +2274,25 @@
         </div>
       </div>
 
+      <!-- WEEKLY WEATHER REPORT -->
+      <div class="weather-calc-panel weekly-forecast" id="weeklyForecast">
+        <div class="wf-header">
+          <div>
+            <h3 class="wcalc-title"><i class="fa-solid fa-calendar-week"></i> 7-Day Weather Report</h3>
+            <p class="wcalc-subtitle" id="wfSubtitle">Plan your hill drive with the week ahead.</p>
+          </div>
+          <div class="wf-tabs" role="group" aria-label="Choose hill station">
+            <button type="button" class="wf-tab active" data-place="ooty" aria-pressed="true">Ooty</button>
+            <button type="button" class="wf-tab" data-place="coonoor" aria-pressed="false">Coonoor</button>
+          </div>
+        </div>
+
+        <div class="wf-status" id="wfStatus" aria-live="polite">Loading weekly forecast...</div>
+        <div class="wf-grid" id="wfGrid"></div>
+        <div class="ws-tip-box" id="wfTip" style="display:none; margin-top:1rem;"></div>
+        <div class="wf-source" id="wfSource"></div>
+      </div>
+
       <div class="weather-calc-panel">
         <div class="weather-calc-grid">
           <div>
@@ -2561,6 +2738,7 @@
         <i class="fa-solid fa-circle-check" style="font-size:2.2rem; color:#1F7A3D;"></i>
         <h3 style="font-family: var(--font-heading); color: var(--forest-green); font-size:1.15rem; margin-top:0.5rem;">Thank You!</h3>
         <p id="reviewSuccessText" style="font-size:0.82rem; color:var(--text-muted); margin:0.4rem 0 1.2rem;"></p>
+        <p id="reviewDebug" style="display:none; font-size:0.7rem; color:var(--text-muted); margin:-0.6rem 0 1rem; word-break:break-word;"></p>
         <a id="reviewWaLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-action btn-chat-wa" style="display:none; margin-bottom:0.6rem;">
           <i class="fa-brands fa-whatsapp"></i> Send on WhatsApp
         </a>
@@ -2732,6 +2910,7 @@
       var SAMPLE_TARGET = 3;      // sample cards fade out as real reviews arrive
       var COOLDOWN_MS = 60000;    // 1 review per minute per browser
       var SAVE_TIMEOUT_MS = 12000;
+      var SHOW_ERROR_REASON = true; // shows the technical reason when saving fails. Set to false once everything works.
 
       /* Only needed if script.js does NOT call firebase.initializeApp() on page load.
          Paste your Firebase web config object here, e.g.
@@ -2753,20 +2932,27 @@
       var honeypot = document.getElementById('reviewWebsite');
       var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
       var submitHTML = submitBtn ? submitBtn.innerHTML : '';
+      var debugEl = document.getElementById('reviewDebug');
       var opener = null;
+      var dbIssue = '';
 
       if (!modal || !form) return;
 
       /* ---------- FIREBASE ---------- */
       function getDb() {
+        dbIssue = '';
         try {
-          if (!window.firebase || !firebase.firestore) return null;
+          if (!window.firebase) { dbIssue = 'Firebase SDK not loaded'; return null; }
+          if (!firebase.firestore) { dbIssue = 'Firestore library not loaded'; return null; }
           var apps = firebase.apps || [];
           var existing = apps.filter(function (a) { return a.name === '[DEFAULT]'; })[0] ||
                          apps.filter(function (a) { return a.name === 'reviews'; })[0];
           if (existing) return existing.firestore();
           if (REVIEW_FIREBASE_CONFIG) return firebase.initializeApp(REVIEW_FIREBASE_CONFIG, 'reviews').firestore();
-        } catch (err) { /* fall through */ }
+          dbIssue = 'Firebase is not initialised on this page. Add your Firebase config to REVIEW_FIREBASE_CONFIG.';
+        } catch (err) {
+          dbIssue = (err && (err.code || err.message)) || 'unknown error';
+        }
         return null;
       }
 
@@ -2793,6 +2979,7 @@
         countEl.textContent = '0 / 500';
         ratingText.textContent = 'Tap a star to rate';
         waLink.style.display = 'none';
+        if (debugEl) debugEl.style.display = 'none';
         form.style.display = '';
         success.style.display = 'none';
       }
@@ -2812,7 +2999,7 @@
       }
 
       /* If the online save fails, nothing is lost: the customer can send it on WhatsApp instead */
-      function showWhatsAppFallback(rating, name, text) {
+      function showWhatsAppFallback(rating, name, text, reason) {
         var stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating);
         var message = 'Hello Mountain Travels, I would like to share my review.\n\n' +
                       'Rating: ' + rating + '/5 ' + stars + '\n' +
@@ -2821,6 +3008,11 @@
         waLink.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(message);
         waLink.style.display = 'inline-flex';
         successText.textContent = 'We could not save your review online right now. Tap below to send it to our team on WhatsApp.';
+        if (reason) console.error('[Review] Not saved online:', reason);
+        if (debugEl && SHOW_ERROR_REASON && reason) {
+          debugEl.textContent = 'Reason: ' + reason;
+          debugEl.style.display = 'block';
+        }
         form.style.display = 'none';
         success.style.display = 'block';
       }
@@ -2873,7 +3065,7 @@
         if (honeypot && honeypot.value) { showSaved(); return; }
 
         var db = getDb();
-        if (!db) { showWhatsAppFallback(rating, name, text); return; }
+        if (!db) { showWhatsAppFallback(rating, name, text, dbIssue); return; }
 
         setBusy(true);
         var finished = false;
@@ -2881,7 +3073,7 @@
         var timer = setTimeout(function () {
           if (finished) return;
           finished = true;
-          showWhatsAppFallback(rating, name, text);
+          showWhatsAppFallback(rating, name, text, 'No response from Firestore after ' + (SAVE_TIMEOUT_MS / 1000) + 's. Check that the Firestore database is created and the rules are published.');
         }, SAVE_TIMEOUT_MS);
 
         db.collection(COLLECTION).add({
@@ -2896,11 +3088,11 @@
           clearTimeout(timer);
           markSent();
           showSaved();
-        }).catch(function () {
+        }).catch(function (err) {
           if (finished) return;
           finished = true;
           clearTimeout(timer);
-          showWhatsAppFallback(rating, name, text);
+          showWhatsAppFallback(rating, name, text, (err && (err.code || err.message)) || 'unknown error');
         });
       });
 
@@ -2990,7 +3182,7 @@
 
       function loadReviews() {
         var db = getDb();
-        if (!db) return;
+        if (!db) { if (dbIssue) console.warn('[Review] Reviews not loaded:', dbIssue); return; }
 
         db.collection(COLLECTION).where('approved', '==', true).limit(100).get().then(function (snap) {
           var items = [];
@@ -3010,12 +3202,270 @@
             return (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0);
           });
           renderReviews(items);
-        }).catch(function () { /* keep the sample cards if loading fails */ });
+        }).catch(function (err) { console.warn('[Review] Could not load reviews:', err && (err.code || err.message)); });
       }
 
       /* wait for 'load' so script.js has finished initialising Firebase */
       if (document.readyState === 'complete') loadReviews();
       else window.addEventListener('load', loadReviews);
+    })();
+  </script>
+
+  <!-- WEEKLY WEATHER REPORT (free Open-Meteo forecast, no API key) -->
+  <script>
+    (function () {
+      'use strict';
+
+      var PLACES = {
+        ooty:    { name: 'Ooty (Udhagai)', lat: 11.4102, lon: 76.6950, elevation: 2240 },
+        coonoor: { name: 'Coonoor',        lat: 11.3530, lon: 76.7959, elevation: 1850 }
+      };
+      var CACHE_MS = 30 * 60 * 1000; // reuse a forecast for 30 minutes
+
+      var panel = document.getElementById('weeklyForecast');
+      if (!panel) return;
+
+      var grid = document.getElementById('wfGrid');
+      var statusEl = document.getElementById('wfStatus');
+      var tipEl = document.getElementById('wfTip');
+      var sourceEl = document.getElementById('wfSource');
+      var subtitleEl = document.getElementById('wfSubtitle');
+      var tabs = Array.prototype.slice.call(panel.querySelectorAll('.wf-tab'));
+
+      var current = 'ooty';
+      var requestId = 0;
+      var started = false;
+
+      function el(tag, cls, text) {
+        var node = document.createElement(tag);
+        if (cls) node.className = cls;
+        if (text !== undefined && text !== null) node.textContent = text;
+        return node;
+      }
+
+      function clear(node) {
+        while (node.firstChild) node.removeChild(node.firstChild);
+      }
+
+      /* WMO weather code -> text + Font Awesome icon (same icons/colours as the cards above) */
+      function describe(code) {
+        if (code === 0) return { text: 'Clear Sky', icon: 'fa-sun', color: '#fde047' };
+        if (code === 1) return { text: 'Mainly Clear', icon: 'fa-sun', color: '#fde047' };
+        if (code === 2) return { text: 'Partly Cloudy', icon: 'fa-cloud-sun', color: '#93c5fd' };
+        if (code === 3) return { text: 'Overcast', icon: 'fa-cloud', color: '#cbd5e1' };
+        if (code === 45 || code === 48) return { text: 'Fog & Mist', icon: 'fa-smog', color: '#cbd5e1' };
+        if (code >= 51 && code <= 57) return { text: 'Light Drizzle', icon: 'fa-cloud-rain', color: '#7dd3fc' };
+        if (code === 65 || code === 67 || code === 82) return { text: 'Heavy Rain', icon: 'fa-cloud-showers-heavy', color: '#7dd3fc' };
+        if (code >= 61 && code <= 66) return { text: 'Rain', icon: 'fa-cloud-rain', color: '#7dd3fc' };
+        if (code === 80 || code === 81) return { text: 'Rain Showers', icon: 'fa-cloud-showers-heavy', color: '#7dd3fc' };
+        if ((code >= 71 && code <= 77) || code === 85 || code === 86) return { text: 'Cold & Snowy', icon: 'fa-snowflake', color: '#e0f2fe' };
+        if (code >= 95) return { text: 'Thunderstorm', icon: 'fa-cloud-bolt', color: '#fde047' };
+        return { text: 'Cloudy', icon: 'fa-cloud', color: '#cbd5e1' };
+      }
+
+      function parseDate(str) {
+        var p = str.split('-');
+        return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+      }
+
+      function url(place) {
+        return 'https://api.open-meteo.com/v1/forecast' +
+          '?latitude=' + place.lat +
+          '&longitude=' + place.lon +
+          '&elevation=' + place.elevation +
+          '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max' +
+          '&timezone=Asia%2FKolkata&forecast_days=7';
+      }
+
+      /* ---- small 30 minute cache so the API is not hit on every visit ---- */
+      function readCache(key) {
+        try {
+          var raw = sessionStorage.getItem('mt_wf_' + key);
+          if (!raw) return null;
+          var obj = JSON.parse(raw);
+          return (obj && Date.now() - obj.t < CACHE_MS) ? obj : null;
+        } catch (e) { return null; }
+      }
+
+      function writeCache(key, data) {
+        try { sessionStorage.setItem('mt_wf_' + key, JSON.stringify({ t: Date.now(), d: data })); } catch (e) { /* ignore */ }
+      }
+
+      /* ---- rendering ---- */
+      function metaRow(iconClass, text) {
+        var row = el('div');
+        var icon = document.createElement('i');
+        icon.className = 'fa-solid ' + iconClass;
+        icon.setAttribute('aria-hidden', 'true');
+        row.appendChild(icon);
+        row.appendChild(document.createTextNode(' ' + text));
+        return row;
+      }
+
+      function buildDay(day, index) {
+        var info = describe(day.code);
+        var weekday = day.date.toLocaleDateString('en-IN', { weekday: 'short' });
+        var rainText = day.rain === null ? '--' : day.rain + '%';
+
+        var card = el('div', 'wf-day' + (index === 0 ? ' today' : ''));
+        card.setAttribute('role', 'group');
+        card.setAttribute('aria-label', (index === 0 ? 'Today' : weekday) + ': ' + info.text + ', high ' + day.max + ' degrees, low ' + day.min + ' degrees');
+
+        card.appendChild(el('div', 'wf-day-name', index === 0 ? 'Today' : weekday));
+        card.appendChild(el('div', 'wf-day-date', day.date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })));
+
+        var icon = el('i', 'fa-solid ' + info.icon + ' wf-day-icon');
+        icon.style.color = info.color;
+        icon.setAttribute('aria-hidden', 'true');
+        card.appendChild(icon);
+
+        card.appendChild(el('div', 'wf-day-high', day.max + '\u00B0C'));
+        card.appendChild(el('div', 'wf-day-low', 'Night: ' + day.min + '\u00B0C'));
+        card.appendChild(el('div', 'wf-day-cond', info.text));
+
+        var meta = el('div', 'wf-day-meta');
+        meta.appendChild(metaRow('fa-droplet', rainText + ' Rain'));
+        meta.appendChild(metaRow('fa-wind', day.wind + ' km/h Wind'));
+        card.appendChild(meta);
+
+        return card;
+      }
+
+      function buildTip(days) {
+        var withRain = days.filter(function (d) { return d.rain !== null; });
+        var parts = [];
+
+        if (withRain.length) {
+          var best = withRain.reduce(function (a, b) { return b.rain < a.rain ? b : a; });
+          var label = best.date.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+          if (best.rain >= 60) {
+            parts.push('Rain is likely through most of the week. Carry an umbrella and start hill drives early in the morning.');
+          } else {
+            parts.push('Best day for sightseeing: ' + label + ' (' + best.rain + '% chance of rain, high ' + best.max + '\u00B0C).');
+          }
+        }
+
+        var storm = days.filter(function (d) { return d.code >= 95; })[0];
+        if (storm) {
+          parts.push('Thunderstorms expected on ' + storm.date.toLocaleDateString('en-IN', { weekday: 'long' }) + '. Please confirm ghat road conditions with our dispatcher.');
+        }
+
+        return parts.join(' ');
+      }
+
+      function render(key, data, stamp) {
+        var d = data.daily;
+        var days = [];
+        for (var i = 0; i < d.time.length; i++) {
+          days.push({
+            date: parseDate(d.time[i]),
+            code: d.weather_code[i],
+            max: Math.round(d.temperature_2m_max[i]),
+            min: Math.round(d.temperature_2m_min[i]),
+            rain: (d.precipitation_probability_max && d.precipitation_probability_max[i] !== null && d.precipitation_probability_max[i] !== undefined)
+                    ? Math.round(d.precipitation_probability_max[i]) : null,
+            wind: Math.round(d.wind_speed_10m_max[i])
+          });
+        }
+
+        clear(grid);
+        days.forEach(function (day, idx) { grid.appendChild(buildDay(day, idx)); });
+
+        statusEl.style.display = 'none';
+
+        var tip = buildTip(days);
+        tipEl.textContent = tip;
+        tipEl.style.display = tip ? 'block' : 'none';
+
+        var place = PLACES[key];
+        subtitleEl.textContent = place.name + ' \u2022 ' + place.elevation.toLocaleString('en-IN') + ' m \u2022 7-day outlook for your hill drive.';
+
+        sourceEl.textContent = 'Forecast by Open-Meteo \u2022 Updated ' +
+          new Date(stamp).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' }) +
+          ' \u2022 Hill weather changes quickly, so please confirm with our dispatcher before you start.';
+      }
+
+      function setStatus(message) {
+        clear(statusEl);
+        statusEl.textContent = message;
+        statusEl.style.display = 'block';
+      }
+
+      function showError() {
+        clear(grid);
+        tipEl.style.display = 'none';
+        sourceEl.textContent = '';
+        clear(statusEl);
+        statusEl.style.display = 'block';
+        statusEl.appendChild(document.createTextNode('Could not load the forecast right now. '));
+        var retry = el('button', 'btn-trip-manage', 'Try again');
+        retry.type = 'button';
+        retry.style.display = 'inline-flex';
+        retry.style.padding = '0 0.85rem';
+        retry.style.marginLeft = '0.4rem';
+        retry.addEventListener('click', function () { load(current, true); });
+        statusEl.appendChild(retry);
+      }
+
+      function load(key, force) {
+        current = key;
+        var id = ++requestId;
+
+        var cached = force ? null : readCache(key);
+        if (cached) { render(key, cached.d, cached.t); return; }
+
+        clear(grid);
+        tipEl.style.display = 'none';
+        sourceEl.textContent = '';
+        setStatus('Loading weekly forecast...');
+
+        fetch(url(PLACES[key]))
+          .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            if (id !== requestId) return; // a newer tab click took over
+            if (!data || !data.daily || !data.daily.time || !data.daily.time.length) throw new Error('Unexpected response');
+            writeCache(key, data);
+            render(key, data, Date.now());
+          })
+          .catch(function (err) {
+            if (id !== requestId) return;
+            console.warn('[Weather] Weekly forecast failed:', err && err.message);
+            showError();
+          });
+      }
+
+      /* ---- station toggle ---- */
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var key = tab.getAttribute('data-place');
+          if (!PLACES[key] || key === current) return;
+          tabs.forEach(function (t) {
+            var on = t === tab;
+            t.classList.toggle('active', on);
+            t.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          load(key, false);
+        });
+      });
+
+      /* load when the weather section is about to be seen */
+      function start() {
+        if (started) return;
+        started = true;
+        load(current, false);
+      }
+
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          if (entries[0] && entries[0].isIntersecting) { io.disconnect(); start(); }
+        }, { rootMargin: '400px' });
+        io.observe(panel);
+      } else {
+        start();
+      }
     })();
   </script>
 </body>
