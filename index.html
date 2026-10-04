@@ -4,6 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MOUNTAIN TRAVELS | Luxury Nilgiris Travel</title>
+  <meta name="description" content="Luxury chauffeur-driven Nilgiris tours and transfers from Coimbatore, Ooty and Coonoor. Tempo Traveller, Innova HyCross, Fortuner 4x4 and Sedan with experienced hill drivers." />
+  <meta name="theme-color" content="#0d2215" />
+  <link rel="icon" href="Mountain.png" type="image/png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MOUNTAIN TRAVELS | Luxury Nilgiris Travel" />
+  <meta property="og:description" content="Luxury chauffeur-driven Nilgiris tours and transfers from Coimbatore, Ooty and Coonoor." />
+
+  <!-- Local business structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "Mountain Travels",
+    "description": "Luxury chauffeur-driven Nilgiris tours and transfers from Coimbatore, Ooty and Coonoor.",
+    "telephone": "+919360543120",
+    "email": "reservations.mountaintravels@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Charing Cross Commercial Complex, Commercial Rd",
+      "addressLocality": "Ooty",
+      "postalCode": "643001",
+      "addressRegion": "Tamil Nadu",
+      "addressCountry": "IN"
+    },
+    "areaServed": ["Ooty", "Coonoor", "Coimbatore"]
+  }
+  </script>
 
   <!-- Google Fonts & Font Awesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,12 +72,21 @@
       --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
+    /* FIX: smooth scrolling belongs on html, not on every element */
+    html {
+      scroll-behavior: smooth;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      scroll-behavior: smooth;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    /* FIX: fixed header no longer hides section titles after clicking a nav link */
+    section[id]:not(#home) {
+      scroll-margin-top: 72px;
     }
 
     body {
@@ -96,13 +134,13 @@
       text-decoration: none;
     }
 
- .nav-logo-img {
-  height: 56px; /* Increased from 44px */
-  width: auto;
-  object-fit: contain;
-  mix-blend-mode: screen; /* Blends out the black background */
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
-}
+    .nav-logo-img {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+      mix-blend-mode: screen; /* Blends out the black background */
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+    }
 
     .nav-desktop-links {
       display: none;
@@ -136,6 +174,7 @@
       color: var(--sunlight-yellow);
       font-size: 0.75rem;
       user-select: none;
+      list-style: none;
     }
 
     .header-actions {
@@ -214,6 +253,7 @@
     .hero {
       position: relative;
       min-height: 85vh;
+      min-height: 85svh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -228,6 +268,7 @@
     @media (min-width: 992px) {
       .hero {
         min-height: 90vh;
+        min-height: 90svh;
         padding: 8rem 2rem 4rem;
       }
     }
@@ -373,6 +414,11 @@
       padding: 3.5rem 1.25rem;
     }
 
+    /* FIX: full-width background band so tinted sections span the whole screen */
+    .section-band {
+      width: 100%;
+    }
+
     .section-full-dark {
       background: var(--forest-dark);
       padding: 3.5rem 1.25rem;
@@ -499,6 +545,11 @@
     @media (min-width: 1040px) {
       .responsive-card-container {
         grid-template-columns: repeat(3, 1fr);
+      }
+
+      /* FIX: 4 fleet cards now sit in one row instead of 3 + 1 orphan */
+      .responsive-card-container.fleet-grid {
+        grid-template-columns: repeat(4, 1fr);
       }
     }
 
@@ -1465,41 +1516,105 @@
     .tab-link.active, .tab-link:hover {
       color: var(--sunlight-yellow);
     }
+
+    /* FIX: very small phones - keep the header on one line */
+    @media (max-width: 380px) {
+      .top-nav {
+        padding: 0 0.75rem;
+      }
+      .header-actions {
+        gap: 0.4rem;
+      }
+      .nav-logo-img {
+        height: 44px;
+      }
+      .user-avatar-chip {
+        padding: 0.4rem 0.7rem;
+      }
+      /* label stays available to screen readers */
+      .user-avatar-chip span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+    }
+
+    /* FIX: visible keyboard focus (only shows for keyboard users) */
+    a:focus-visible,
+    button:focus-visible,
+    .vehicle-choice-card:focus-visible,
+    .otp-digit:focus-visible,
+    .form-input:focus-visible,
+    .form-select:focus-visible,
+    .wcalc-select:focus-visible {
+      outline: 2.5px solid var(--sky-blue);
+      outline-offset: 2px;
+    }
+
+    .top-nav a:focus-visible,
+    .top-nav button:focus-visible,
+    .mobile-tab-bar a:focus-visible,
+    .section-full-dark select:focus-visible,
+    .ticket-summary-card button:focus-visible,
+    .engine-header-banner :focus-visible {
+      outline-color: var(--sunlight-yellow);
+    }
+
+    .hero a:focus-visible {
+      outline-color: #ffffff;
+    }
+
+    /* FIX: respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
 
   <!-- TOP HEADER -->
   <header class="top-nav" id="topNav">
-    <a href="#home" class="brand-logo">
+    <a href="#home" class="brand-logo" aria-label="Mountain Travels home">
       <img src="Mountain.png" alt="MOUNTAIN TRAVELS" class="nav-logo-img" />
     </a>
 
+    <!-- FIX: bullets are now valid <li> items inside the <ul> -->
     <ul class="nav-desktop-links">
       <li><a href="#home">Home</a></li>
-      <span class="nav-bullet">•</span>
+      <li class="nav-bullet" aria-hidden="true">•</li>
       <li><a href="#places">Places</a></li>
-      <span class="nav-bullet">•</span>
+      <li class="nav-bullet" aria-hidden="true">•</li>
       <li><a href="#fleet">Fleet</a></li>
-      <span class="nav-bullet">•</span>
+      <li class="nav-bullet" aria-hidden="true">•</li>
       <li><a href="#reviews">Reviews</a></li>
-      <span class="nav-bullet">•</span>
+      <li class="nav-bullet" aria-hidden="true">•</li>
       <li><a href="#weather">Weather</a></li>
-      <span class="nav-bullet">•</span>
+      <li class="nav-bullet" aria-hidden="true">•</li>
       <li><a href="#reserve">Reserve</a></li>
-      <span class="nav-bullet">•</span>
+      <li class="nav-bullet" aria-hidden="true">•</li>
       <li><a href="#contact">Contact</a></li>
     </ul>
 
     <div class="header-actions">
-      <a href="tel:+919360543120" class="header-btn" title="Call Concierge">
+      <a href="tel:+919360543120" class="header-btn" title="Call Concierge" aria-label="Call Concierge">
         <i class="fa-solid fa-phone"></i>
       </a>
 
       <a href="https://wa.me/919360543120?text=Hello%20Mountain%20Travels,%20I%20would%20like%20to%20book%20a%20luxury%20Nilgiri%20ride" 
          class="header-btn header-btn-wa" 
          target="_blank" 
-         title="Chat on WhatsApp">
+         rel="noopener noreferrer"
+         title="Chat on WhatsApp"
+         aria-label="Chat on WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
       </a>
 
@@ -1511,7 +1626,7 @@
 
   <!-- HERO SECTION WITH VIDEO BACKGROUND -->
   <section class="hero" id="home">
-    <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
+    <video class="hero-bg-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
       <source src="webvid.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
@@ -1536,6 +1651,7 @@
         </a>
         <a href="https://wa.me/919360543120?text=Hello%20Mountain%20Travels,%20I%20would%20like%20to%20book%20a%20luxury%20Nilgiri%20ride%20with%20the%2020%25%20special%20discount" 
            target="_blank" 
+           rel="noopener noreferrer"
            class="btn-action btn-chat-wa">
           <i class="fa-brands fa-whatsapp"></i> WhatsApp Us
         </a>
@@ -1658,97 +1774,100 @@
   </section>
 
   <!-- 2. LUXURY NILGIRIS FLEET -->
-  <section class="section-wrap" id="fleet" style="background: #fbfdff;">
-    <div class="section-header">
-      <span class="section-tag"><i class="fa-solid fa-car-rear"></i> Nilgiris Fleet</span>
-      <h2 class="section-title">Our Premium Fleet</h2>
-      <p class="section-desc">Select your ride for comfortable mountain transit. 20% discount applied to all models.</p>
-    </div>
+  <!-- FIX: background sits on a full-width band, content stays inside the 1200px wrapper -->
+  <section class="section-band" id="fleet" style="background: #fbfdff;">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-tag"><i class="fa-solid fa-car-rear"></i> Nilgiris Fleet</span>
+        <h2 class="section-title">Our Premium Fleet</h2>
+        <p class="section-desc">Select your ride for comfortable mountain transit. 20% discount applied to all models.</p>
+      </div>
 
-    <div class="responsive-card-container">
-      <article class="fleet-card">
-        <span class="offer-ribbon">20% OFF</span>
-        <div class="card-img-holder">
-          <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=750&q=80" alt="Tempo Traveller Ooty" loading="lazy" />
-          <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 10-14 Seats</span>
-        </div>
-        <div class="card-body">
-          <h3 class="card-title">Tempo Traveller (12/14)</h3>
-          <p class="fleet-tagline">King of Group Tours & Large Families</p>
-          <ul class="fleet-specs-list">
-            <li><i class="fa-solid fa-circle-check"></i> High Roof Reclining Seats</li>
-            <li><i class="fa-solid fa-circle-check"></i> Deep Rear Trunk for 12+ Bags</li>
-            <li><i class="fa-solid fa-circle-check"></i> Experienced Ghat Chauffeur</li>
-          </ul>
-          <div class="fleet-footer-row">
-            <div class="fleet-offer-tag">20% Discount</div>
-            <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-tempo', 'Tempo Traveller (12/14 Seater)', 'Tempo')">Select</button>
+      <div class="responsive-card-container fleet-grid">
+        <article class="fleet-card">
+          <span class="offer-ribbon">20% OFF</span>
+          <div class="card-img-holder">
+            <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=750&q=80" alt="Tempo Traveller Ooty" loading="lazy" />
+            <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 10-14 Seats</span>
           </div>
-        </div>
-      </article>
+          <div class="card-body">
+            <h3 class="card-title">Tempo Traveller (12/14)</h3>
+            <p class="fleet-tagline">King of Group Tours & Large Families</p>
+            <ul class="fleet-specs-list">
+              <li><i class="fa-solid fa-circle-check"></i> High Roof Reclining Seats</li>
+              <li><i class="fa-solid fa-circle-check"></i> Deep Rear Trunk for 12+ Bags</li>
+              <li><i class="fa-solid fa-circle-check"></i> Experienced Ghat Chauffeur</li>
+            </ul>
+            <div class="fleet-footer-row">
+              <div class="fleet-offer-tag">20% Discount</div>
+              <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-tempo', 'Tempo Traveller (12/14 Seater)', 'Tempo')">Select</button>
+            </div>
+          </div>
+        </article>
 
-      <article class="fleet-card">
-        <span class="offer-ribbon">20% OFF</span>
-        <div class="card-img-holder">
-          <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=750&q=80" alt="Innova HyCross" loading="lazy" />
-          <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 6-7 Seats</span>
-        </div>
-        <div class="card-body">
-          <h3 class="card-title">Innova HyCross / Crysta</h3>
-          <p class="fleet-tagline">Comfort & Zero Motion Sickness</p>
-          <ul class="fleet-specs-list">
-            <li><i class="fa-solid fa-circle-check"></i> Ottoman Captain Recliners</li>
-            <li><i class="fa-solid fa-circle-check"></i> Whisper Quiet Hybrid Powertrain</li>
-            <li><i class="fa-solid fa-circle-check"></i> Dual Zone Climate Control</li>
-          </ul>
-          <div class="fleet-footer-row">
-            <div class="fleet-offer-tag">20% Discount</div>
-            <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-innova', 'Toyota Innova HyCross Luxury', 'Innova')">Select</button>
+        <article class="fleet-card">
+          <span class="offer-ribbon">20% OFF</span>
+          <div class="card-img-holder">
+            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=750&q=80" alt="Innova HyCross" loading="lazy" />
+            <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 6-7 Seats</span>
           </div>
-        </div>
-      </article>
+          <div class="card-body">
+            <h3 class="card-title">Innova HyCross / Crysta</h3>
+            <p class="fleet-tagline">Comfort & Zero Motion Sickness</p>
+            <ul class="fleet-specs-list">
+              <li><i class="fa-solid fa-circle-check"></i> Ottoman Captain Recliners</li>
+              <li><i class="fa-solid fa-circle-check"></i> Whisper Quiet Hybrid Powertrain</li>
+              <li><i class="fa-solid fa-circle-check"></i> Dual Zone Climate Control</li>
+            </ul>
+            <div class="fleet-footer-row">
+              <div class="fleet-offer-tag">20% Discount</div>
+              <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-innova', 'Toyota Innova HyCross Luxury', 'Innova')">Select</button>
+            </div>
+          </div>
+        </article>
 
-      <article class="fleet-card">
-        <span class="offer-ribbon">20% OFF</span>
-        <div class="card-img-holder">
-          <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=750&q=80" alt="Toyota Fortuner 4x4" loading="lazy" />
-          <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 6-7 Seats</span>
-        </div>
-        <div class="card-body">
-          <h3 class="card-title">Fortuner 4x4 Highland</h3>
-          <p class="fleet-tagline">Offbeat Sanctuaries & Forest Trails</p>
-          <ul class="fleet-specs-list">
-            <li><i class="fa-solid fa-circle-check"></i> Heavy-Duty 4-Wheel Drive</li>
-            <li><i class="fa-solid fa-circle-check"></i> Effortless 36 Hairpin Climb</li>
-            <li><i class="fa-solid fa-circle-check"></i> High Ground Clearance</li>
-          </ul>
-          <div class="fleet-footer-row">
-            <div class="fleet-offer-tag">20% Discount</div>
-            <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-fortuner', 'Toyota Fortuner 4x4 Highland Edition', 'Fortuner')">Select</button>
+        <article class="fleet-card">
+          <span class="offer-ribbon">20% OFF</span>
+          <div class="card-img-holder">
+            <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=750&q=80" alt="Toyota Fortuner 4x4" loading="lazy" />
+            <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 6-7 Seats</span>
           </div>
-        </div>
-      </article>
+          <div class="card-body">
+            <h3 class="card-title">Fortuner 4x4 Highland</h3>
+            <p class="fleet-tagline">Offbeat Sanctuaries & Forest Trails</p>
+            <ul class="fleet-specs-list">
+              <li><i class="fa-solid fa-circle-check"></i> Heavy-Duty 4-Wheel Drive</li>
+              <li><i class="fa-solid fa-circle-check"></i> Effortless 36 Hairpin Climb</li>
+              <li><i class="fa-solid fa-circle-check"></i> High Ground Clearance</li>
+            </ul>
+            <div class="fleet-footer-row">
+              <div class="fleet-offer-tag">20% Discount</div>
+              <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-fortuner', 'Toyota Fortuner 4x4 Highland Edition', 'Fortuner')">Select</button>
+            </div>
+          </div>
+        </article>
 
-      <article class="fleet-card">
-        <span class="offer-ribbon">20% OFF</span>
-        <div class="card-img-holder">
-          <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=750&q=80" alt="Sedan Dzire" loading="lazy" />
-          <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 1-4 Seats</span>
-        </div>
-        <div class="card-body">
-          <h3 class="card-title">Sedan (Dzire / Etios)</h3>
-          <p class="fleet-tagline">Budget Friendly for Small Families</p>
-          <ul class="fleet-specs-list">
-            <li><i class="fa-solid fa-circle-check"></i> Nimble on Narrow Tea Trails</li>
-            <li><i class="fa-solid fa-circle-check"></i> Efficient Hill Air Conditioning</li>
-            <li><i class="fa-solid fa-circle-check"></i> 2 Large Suitcases Boot Space</li>
-          </ul>
-          <div class="fleet-footer-row">
-            <div class="fleet-offer-tag">20% Discount</div>
-            <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-sedan', 'Executive Sedan (Dzire / Etios)', 'Sedan')">Select</button>
+        <article class="fleet-card">
+          <span class="offer-ribbon">20% OFF</span>
+          <div class="card-img-holder">
+            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=750&q=80" alt="Sedan Dzire" loading="lazy" />
+            <span class="fleet-badge-capacity"><i class="fa-solid fa-users"></i> 1-4 Seats</span>
           </div>
-        </div>
-      </article>
+          <div class="card-body">
+            <h3 class="card-title">Sedan (Dzire / Etios)</h3>
+            <p class="fleet-tagline">Budget Friendly for Small Families</p>
+            <ul class="fleet-specs-list">
+              <li><i class="fa-solid fa-circle-check"></i> Nimble on Narrow Tea Trails</li>
+              <li><i class="fa-solid fa-circle-check"></i> Efficient Hill Air Conditioning</li>
+              <li><i class="fa-solid fa-circle-check"></i> 2 Large Suitcases Boot Space</li>
+            </ul>
+            <div class="fleet-footer-row">
+              <div class="fleet-offer-tag">20% Discount</div>
+              <button type="button" class="btn-card-action" style="width: auto; padding: 0 1rem;" onclick="pickVehicle('card-sedan', 'Executive Sedan (Dzire / Etios)', 'Sedan')">Select</button>
+            </div>
+          </div>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -1781,7 +1900,7 @@
         </div>
       </div>
       <div>
-        <a href="https://maps.google.com" target="_blank" class="btn-action" style="background:#fff; color:#1a73e8; border:1.5px solid #dadce0; height:38px; font-size:0.8rem; width:auto;">
+        <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="btn-action" style="background:#fff; color:#1a73e8; border:1.5px solid #dadce0; height:38px; font-size:0.8rem; width:auto;">
           <i class="fa-solid fa-pen-to-square"></i> Write a Google Review
         </a>
       </div>
@@ -1912,7 +2031,7 @@
             <p class="wcalc-subtitle">Select route and time to forecast mountain road safety.</p>
 
             <div class="wcalc-field">
-              <label class="wcalc-label">Destination</label>
+              <label class="wcalc-label" for="wcalcDest">Destination</label>
               <select id="wcalcDest" class="wcalc-select" onchange="runWeatherCalculation()">
                 <option value="ooty_doddabetta">Ooty & Doddabetta (2,637 m)</option>
                 <option value="coonoor_dolphins">Coonoor & Dolphin's Nose (1,850 m)</option>
@@ -1922,7 +2041,7 @@
             </div>
 
             <div class="wcalc-field">
-              <label class="wcalc-label">Travel Time</label>
+              <label class="wcalc-label" for="wcalcTime">Travel Time</label>
               <select id="wcalcTime" class="wcalc-select" onchange="runWeatherCalculation()">
                 <option value="morning">Morning (06:00 - 09:30 AM)</option>
                 <option value="afternoon" selected>Afternoon (11:00 AM - 03:30 PM)</option>
@@ -1931,7 +2050,7 @@
             </div>
           </div>
 
-          <div class="wcalc-result-box">
+          <div class="wcalc-result-box" aria-live="polite">
             <div class="wcalc-stat-hero">
               <div>
                 <div class="wcalc-temp-large" id="wcalcTemp">16°C</div>
@@ -1977,12 +2096,12 @@
             <div class="form-group-row">
               <div class="form-group">
                 <label class="form-label" for="resName">Full Name *</label>
-                <input type="text" id="resName" class="form-input" placeholder="e.g. Koushik" required />
+                <input type="text" id="resName" class="form-input" placeholder="e.g. Rahul" autocomplete="name" required />
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="resPhone">Registered Mobile (WhatsApp) *</label>
-                <input type="tel" id="resPhone" class="form-input" placeholder="e.g. 9360543120" pattern="[0-9]{10}" required />
+                <input type="tel" id="resPhone" class="form-input" placeholder="e.g. 98XXXXXXXX" inputmode="numeric" maxlength="10" autocomplete="tel-national" pattern="[6-9][0-9]{9}" title="Enter a valid 10-digit mobile number" required />
               </div>
             </div>
 
@@ -2029,15 +2148,17 @@
 
             <!-- TACTILE VEHICLE SELECTION CARDS -->
             <div class="form-group">
-              <label class="form-label">Select Vehicle</label>
+              <span class="form-label" id="vehicleGroupLabel">Select Vehicle</span>
               
               <!-- Hidden Input holds selected vehicle -->
               <input type="hidden" id="selectedVehicleInput" name="selectedVehicle" value="Toyota Innova HyCross Luxury" />
 
-              <div class="vehicle-selector-grid">
+              <!-- FIX: keyboard + screen-reader accessible radio group (state synced in the script at the bottom) -->
+              <div class="vehicle-selector-grid" role="radiogroup" aria-labelledby="vehicleGroupLabel">
                 <!-- Tempo -->
                 <div class="vehicle-choice-card" 
                      id="card-tempo" 
+                     role="radio" aria-checked="false" tabindex="-1"
                      onclick="pickVehicle('card-tempo', 'Tempo Traveller (12/14 Seater)', 'Tempo')">
                   <i class="fa-solid fa-van-shuttle vehicle-thumb-icon"></i>
                   <div class="vehicle-choice-info">
@@ -2049,6 +2170,7 @@
                 <!-- Innova (Active by Default) -->
                 <div class="vehicle-choice-card active" 
                      id="card-innova" 
+                     role="radio" aria-checked="true" tabindex="0"
                      onclick="pickVehicle('card-innova', 'Toyota Innova HyCross Luxury', 'Innova')">
                   <i class="fa-solid fa-couch vehicle-thumb-icon"></i>
                   <div class="vehicle-choice-info">
@@ -2060,6 +2182,7 @@
                 <!-- Fortuner -->
                 <div class="vehicle-choice-card" 
                      id="card-fortuner" 
+                     role="radio" aria-checked="false" tabindex="-1"
                      onclick="pickVehicle('card-fortuner', 'Toyota Fortuner 4x4 Highland Edition', 'Fortuner')">
                   <i class="fa-solid fa-mountain vehicle-thumb-icon"></i>
                   <div class="vehicle-choice-info">
@@ -2071,6 +2194,7 @@
                 <!-- Sedan -->
                 <div class="vehicle-choice-card" 
                      id="card-sedan" 
+                     role="radio" aria-checked="false" tabindex="-1"
                      onclick="pickVehicle('card-sedan', 'Executive Sedan (Dzire / Etios)', 'Sedan')">
                   <i class="fa-solid fa-car-side vehicle-thumb-icon"></i>
                   <div class="vehicle-choice-info">
@@ -2142,38 +2266,41 @@
   </section>
 
   <!-- 6. CONTACT & HUBS -->
-  <section class="section-wrap" id="contact" style="background: #f4f7f5;">
-    <div class="section-header">
-      <span class="section-tag"><i class="fa-solid fa-headset"></i> 24/7 Nilgiris Concierge</span>
-      <h2 class="section-title">Contact & Helpdesk</h2>
-      <p class="section-desc">Reach our Nilgiris dispatch center anytime.</p>
-    </div>
-
-    <div class="contact-grid">
-      <div class="hub-box">
-        <div class="hub-icon"><i class="fa-solid fa-phone-volume"></i></div>
-        <div class="hub-info">
-          <h5>24/7 Hotline & WhatsApp</h5>
-          <p>
-            <a href="tel:+919360543120">+91 9360543120</a><br>
-            <a href="https://wa.me/919360543120" target="_blank">Chat with Dispatcher</a>
-          </p>
-        </div>
+  <!-- FIX: background sits on a full-width band, content stays inside the 1200px wrapper -->
+  <section class="section-band" id="contact" style="background: #f4f7f5;">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-tag"><i class="fa-solid fa-headset"></i> 24/7 Nilgiris Concierge</span>
+        <h2 class="section-title">Contact & Helpdesk</h2>
+        <p class="section-desc">Reach our Nilgiris dispatch center anytime.</p>
       </div>
 
-      <div class="hub-box">
-        <div class="hub-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
-        <div class="hub-info">
-          <h5>Official Bookings Desk</h5>
-          <p><a href="mailto:reservations.mountaintravels@gmail.com">reservations.mountaintravels@gmail.com</a></p>
+      <div class="contact-grid">
+        <div class="hub-box">
+          <div class="hub-icon"><i class="fa-solid fa-phone-volume"></i></div>
+          <div class="hub-info">
+            <h5>24/7 Hotline & WhatsApp</h5>
+            <p>
+              <a href="tel:+919360543120">+91 9360543120</a><br>
+              <a href="https://wa.me/919360543120" target="_blank" rel="noopener noreferrer">Chat with Dispatcher</a>
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="hub-box">
-        <div class="hub-icon"><i class="fa-solid fa-building-flag"></i></div>
-        <div class="hub-info">
-          <h5>Central Ooty Office</h5>
-          <p>Charing Cross Commercial Complex, Commercial Rd, Ooty 643001</p>
+        <div class="hub-box">
+          <div class="hub-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+          <div class="hub-info">
+            <h5>Official Bookings Desk</h5>
+            <p><a href="mailto:reservations.mountaintravels@gmail.com">reservations.mountaintravels@gmail.com</a></p>
+          </div>
+        </div>
+
+        <div class="hub-box">
+          <div class="hub-icon"><i class="fa-solid fa-building-flag"></i></div>
+          <div class="hub-info">
+            <h5>Central Ooty Office</h5>
+            <p>Charing Cross Commercial Complex, Commercial Rd, Ooty 643001</p>
+          </div>
         </div>
       </div>
     </div>
@@ -2185,7 +2312,7 @@
   </footer>
 
   <!-- MODAL: MOBILE OTP -->
-  <div class="sheet-backdrop" id="authModal">
+  <div class="sheet-backdrop" id="authModal" role="dialog" aria-modal="true" aria-label="Mobile verification">
     <div class="sheet-card">
       <button class="sheet-close" onclick="closeAuthModal()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
 
@@ -2200,13 +2327,13 @@
           <label class="form-label" for="modalPhoneInput">Mobile Number</label>
           <div style="display:flex; align-items:center; gap:0.4rem;">
             <span style="font-weight:700; color:var(--slate-700); padding:0 0.4rem; background:#f1f5f9; height:44px; display:flex; align-items:center; border-radius:8px; border:1.5px solid var(--sky-blue-border);">+91</span>
-            <input type="tel" id="modalPhoneInput" class="form-input" placeholder="Enter 10-digit number" maxlength="10" />
+            <input type="tel" id="modalPhoneInput" class="form-input" placeholder="Enter 10-digit number" maxlength="10" inputmode="numeric" autocomplete="tel-national" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="modalNameInput">Your Name</label>
-          <input type="text" id="modalNameInput" class="form-input" placeholder="e.g. Koushik" />
+          <input type="text" id="modalNameInput" class="form-input" placeholder="e.g. Rahul" autocomplete="name" />
         </div>
 
         <!-- Firebase Invisible reCAPTCHA Container -->
@@ -2252,7 +2379,7 @@
   </div>
 
   <!-- MODAL: TRIP MODIFICATION -->
-  <div class="sheet-backdrop" id="tripModifyModal">
+  <div class="sheet-backdrop" id="tripModifyModal" role="dialog" aria-modal="true" aria-labelledby="tripModifyHeading">
     <div class="sheet-card">
       <button class="sheet-close" onclick="closeTripModifyModal()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
 
@@ -2264,7 +2391,7 @@
 
       <div class="form-group">
         <label class="form-label" for="modPhone">Registered WhatsApp Number</label>
-        <input type="tel" id="modPhone" class="form-input" placeholder="e.g. 9360543120" />
+        <input type="tel" id="modPhone" class="form-input" placeholder="e.g. 98XXXXXXXX" inputmode="numeric" maxlength="10" autocomplete="tel-national" />
       </div>
 
       <div class="form-group" id="groupNewDate">
@@ -2318,5 +2445,124 @@
 
   <!-- APP SCRIPTS -->
   <script src="script.js"></script>
+
+  <!-- UX FIXES (runs after script.js, does not change any of its logic) -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* 1. Block past dates in both date pickers */
+      var now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      var todayISO = now.toISOString().split('T')[0];
+      ['resDate', 'modNewDate'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.min = todayISO;
+      });
+
+      /* 2. Run the browser's built-in form validation before the booking is sent.
+            (The submit button sits outside the <form>, so required/pattern never ran.) */
+      if (typeof window.submitBookingToWhatsApp === 'function') {
+        var originalSubmit = window.submitBookingToWhatsApp;
+        window.submitBookingToWhatsApp = function () {
+          var form = document.getElementById('reservationForm');
+          if (form && !form.reportValidity()) return;
+          return originalSubmit.apply(this, arguments);
+        };
+      }
+
+      /* 3. Vehicle cards: keyboard support + keep aria state in sync with the .active class */
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.vehicle-choice-card'));
+      function syncCards() {
+        cards.forEach(function (c) {
+          var on = c.classList.contains('active');
+          c.setAttribute('aria-checked', on ? 'true' : 'false');
+          c.setAttribute('tabindex', on ? '0' : '-1');
+        });
+      }
+      cards.forEach(function (card, i) {
+        card.addEventListener('keydown', function (e) {
+          var key = e.key;
+          if (key === 'Enter' || key === ' ' || key === 'Spacebar') {
+            e.preventDefault();
+            card.click();
+          } else if (key === 'ArrowRight' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowUp') {
+            e.preventDefault();
+            var step = (key === 'ArrowRight' || key === 'ArrowDown') ? 1 : -1;
+            var next = cards[(i + step + cards.length) % cards.length];
+            next.click();
+            next.focus();
+          }
+        });
+        new MutationObserver(syncCards).observe(card, { attributes: true, attributeFilter: ['class'] });
+      });
+      syncCards();
+
+      /* 4. Modals: Escape closes, page does not scroll behind an open modal */
+      var modals = Array.prototype.slice.call(document.querySelectorAll('.sheet-backdrop'));
+      function openModal() {
+        return modals.filter(function (m) {
+          return window.getComputedStyle(m).display !== 'none';
+        })[0];
+      }
+      function updateScrollLock() {
+        document.body.style.overflow = openModal() ? 'hidden' : '';
+      }
+      modals.forEach(function (m) {
+        new MutationObserver(updateScrollLock).observe(m, { attributes: true, attributeFilter: ['class', 'style'] });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        var m = openModal();
+        if (!m) return;
+        if (m.id === 'authModal' && typeof window.closeAuthModal === 'function') window.closeAuthModal();
+        else if (m.id === 'tripModifyModal' && typeof window.closeTripModifyModal === 'function') window.closeTripModifyModal();
+        else m.classList.remove('show');
+      });
+
+      /* 5. Phone fields: digits only */
+      ['modalPhoneInput', 'resPhone', 'modPhone'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', function () {
+          var clean = el.value.replace(/\D/g, '').slice(0, 10);
+          if (el.value !== clean) el.value = clean;
+        });
+      });
+
+      /* 6. OTP boxes: numeric keypad, digits only, Backspace goes back, paste fills all 6 */
+      var otps = [];
+      for (var n = 1; n <= 6; n++) {
+        var box = document.getElementById('otp' + n);
+        if (box) otps.push(box);
+      }
+      otps.forEach(function (box, i) {
+        box.setAttribute('inputmode', 'numeric');
+        box.setAttribute('pattern', '[0-9]*');
+        box.setAttribute('autocomplete', 'one-time-code');
+        box.setAttribute('aria-label', 'Digit ' + (i + 1) + ' of ' + otps.length);
+
+        box.addEventListener('beforeinput', function (e) {
+          if (e.data && /\D/.test(e.data)) e.preventDefault();
+        });
+
+        box.addEventListener('keydown', function (e) {
+          if (e.key === 'Backspace' && !box.value && i > 0) {
+            e.preventDefault();
+            otps[i - 1].value = '';
+            otps[i - 1].focus();
+          }
+        });
+
+        box.addEventListener('paste', function (e) {
+          var text = ((e.clipboardData || window.clipboardData).getData('text') || '').replace(/\D/g, '').slice(0, otps.length);
+          if (!text) return;
+          e.preventDefault();
+          otps.forEach(function (o, k) { o.value = text[k] || ''; });
+          otps[Math.min(text.length, otps.length) - 1].focus();
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
