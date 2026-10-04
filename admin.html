@@ -59,7 +59,7 @@ button,input,select{font-family:inherit}button{cursor:pointer}
 @media(max-width:900px){
  .side{display:none}.main{padding:1rem 1rem 5.5rem}.who{display:none}.top h2{font-size:1.15rem}
  .tabbar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--dark);border-top:2px solid var(--gold);padding-bottom:env(safe-area-inset-bottom,0)}
- .tabbar button{flex:1;position:relative;background:none;border:none;color:#9cb5a5;padding:.5rem 0;font-size:.64rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:.2rem}
+ .tabbar button{flex:1;min-width:0;position:relative;background:none;border:none;color:#9cb5a5;padding:.5rem 0;font-size:.58rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:.2rem}
  .tabbar button i{font-size:1.05rem}.tabbar button.on{color:var(--gold)}
  .tabbar .cnt{position:absolute;top:2px;left:55%;background:var(--red);color:#fff;border-radius:999px;font-size:.6rem;padding:0 .35rem}
  .tabbar .cnt:empty{display:none}
@@ -128,6 +128,7 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
     <img src="Mountain.png" alt="Mountain Travels" class="logo-img">
     <button class="nav on" data-tab="overview"><i class="fa-solid fa-gauge"></i> Overview</button>
     <button class="nav" data-tab="bookings"><i class="fa-solid fa-calendar-check"></i> Bookings <span class="cnt" id="cntBook"></span></button>
+    <button class="nav" data-tab="requests"><i class="fa-solid fa-calendar-xmark"></i> Change requests <span class="cnt" id="cntReq"></span></button>
     <button class="nav" data-tab="reviews"><i class="fa-solid fa-star"></i> Reviews <span class="cnt" id="cntRev"></span></button>
     <button class="nav" data-tab="customers"><i class="fa-solid fa-users"></i> Customers</button>
     <button class="nav" data-tab="settings"><i class="fa-solid fa-gear"></i> Settings</button>
@@ -175,6 +176,11 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
       <div class="cards" id="bookList"></div>
     </section>
 
+    <section id="tab-requests" class="hidden">
+      <div class="toolbar" id="reqChips"></div>
+      <div class="cards" id="reqList"></div>
+    </section>
+
     <section id="tab-reviews" class="hidden">
       <div class="toolbar" id="revChips"></div>
       <div class="cards" id="revList"></div>
@@ -204,9 +210,10 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
 <nav class="tabbar hidden" id="tabbar" aria-label="Admin navigation">
   <button class="on" data-tab="overview"><i class="fa-solid fa-gauge"></i>Home</button>
   <button data-tab="bookings"><i class="fa-solid fa-calendar-check"></i>Bookings<span class="cnt" id="cntBook2"></span></button>
+  <button data-tab="requests"><i class="fa-solid fa-calendar-xmark"></i>Changes<span class="cnt" id="cntReq2"></span></button>
   <button data-tab="reviews"><i class="fa-solid fa-star"></i>Reviews<span class="cnt" id="cntRev2"></span></button>
-  <button data-tab="customers"><i class="fa-solid fa-users"></i>Customers</button>
-  <button data-tab="settings"><i class="fa-solid fa-gear"></i>Settings</button>
+  <button data-tab="customers"><i class="fa-solid fa-users"></i>Users</button>
+  <button data-tab="settings"><i class="fa-solid fa-gear"></i>More</button>
 </nav>
 <div class="toast" id="toast" role="status"></div>
 
@@ -226,14 +233,14 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
     measurementId: 'G-RY421HFCNG'
   };
   var ADMIN_EMAILS = ['koushiksk744@gmail.com'];
-  var COL = { reviews: 'reviews', bookings: 'bookings', customers: 'users' };
+  var COL = { reviews: 'reviews', bookings: 'bookings', customers: 'users', requests: 'tripRequests' };
   var STATUSES = ['new', 'confirmed', 'completed', 'cancelled'];
 
   var $ = function (id) { return document.getElementById(id); };
   if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
   var auth = firebase.auth(), db = firebase.firestore();
-  var unsubs = [], data = { reviews: [], bookings: [], customers: [] }, health = {}, loaded = {};
-  var bf = 'all', rf = 'pending';
+  var unsubs = [], data = { reviews: [], bookings: [], customers: [], requests: [] }, health = {}, loaded = {};
+  var bf = 'all', rf = 'pending', qf = 'new';
 
   function el(t, c, x) { var n = document.createElement(t); if (c) n.className = c; if (x !== undefined && x !== null) n.textContent = x; return n; }
   function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
@@ -241,7 +248,7 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
   function btn(cls, icon, label, fn) { var b = el('button', 'btn sm ' + cls); b.type = 'button'; b.appendChild(ico(icon)); b.appendChild(document.createTextNode(' ' + label)); b.addEventListener('click', function () { fn(b); }); return b; }
   function link(cls, icon, label, href) { var a = el('a', 'btn sm ' + cls); a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.appendChild(ico(icon)); a.appendChild(document.createTextNode(' ' + label)); return a; }
   var tt; function toast(m) { var t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(function () { t.classList.remove('show'); }, 2600); }
-  function ts(o) { var v = o.createdAt; return v && v.toDate ? v.toDate().getTime() : 0; }
+  function ts(o) { var v = o.createdAt || o.lastLogin; return v && v.toDate ? v.toDate().getTime() : 0; }
   function fmt(v) { if (v && v.toDate) v = v.toDate(); return v instanceof Date ? v.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : ''; }
   function fmtDay(s) { if (!s) return '-'; var p = String(s).split('-'); if (p.length !== 3) return s; return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
   function todayISO() { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
@@ -278,7 +285,7 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
   });
 
   /* ---------- tabs ---------- */
-  var TITLES = { overview: 'Overview', bookings: 'Bookings', reviews: 'Reviews', customers: 'Customers', settings: 'Settings' };
+  var TITLES = { overview: 'Overview', bookings: 'Bookings', requests: 'Change requests', reviews: 'Reviews', customers: 'Customers', settings: 'Settings' };
   function showTab(name) {
     Object.keys(TITLES).forEach(function (t) { $('tab-' + t).classList.toggle('hidden', t !== name); });
     document.querySelectorAll('[data-tab]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === name); });
@@ -301,9 +308,9 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
       health[name] = { ok: false, msg: err.code || err.message }; data[name] = []; renderAll();
     }));
   }
-  function start() { ['reviews', 'bookings', 'customers'].forEach(listen); }
+  function start() { ['reviews', 'bookings', 'customers', 'requests'].forEach(listen); }
 
-  function renderAll() { renderStats(); renderBookings(); renderReviews(); renderCustomers(); renderConn(); }
+  function renderAll() { renderStats(); renderRequests(); renderBookings(); renderReviews(); renderCustomers(); renderConn(); }
 
   function renderStats() {
     var b = data.bookings, r = data.reviews, today = todayISO();
@@ -315,6 +322,8 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
     $('sPend').textContent = pend.length;
     $('sAvg').textContent = live.length ? (live.reduce(function (s, x) { return s + (x.rating || 0); }, 0) / live.length).toFixed(1) : '-';
     ['cntBook', 'cntBook2'].forEach(function (id) { $(id).textContent = nw || ''; });
+    var nr = data.requests.filter(function (x) { return (x.status || 'new') === 'new'; }).length;
+    ['cntReq', 'cntReq2'].forEach(function (id) { $(id).textContent = nr || ''; });
     ['cntRev', 'cntRev2'].forEach(function (id) { $(id).textContent = pend.length || ''; });
     var box = $('recent'); clear(box);
     var latest = b.filter(function (x) { return (x.status || 'new') === 'new'; }).slice(0, 4);
@@ -336,7 +345,7 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
     l.appendChild(el('div', 'nm', b.name || 'Customer')); l.appendChild(el('div', 'd', 'Received ' + fmt(b.createdAt)));
     h.appendChild(l); h.appendChild(el('span', 'badge b-' + st, cap(st))); card.appendChild(h);
     var kv = el('div', 'kv');
-    [['Trip', b.circuit], ['Date', fmtDay(b.date)], ['Pickup', b.pickup], ['Vehicle', b.vehicle], ['Guests', b.guests], ['Phone', b.phone]].forEach(function (p) {
+    [['Trip', b.circuit], ['OTP verified', b.verified ? 'Yes (20% off)' : 'No'], ['Date', fmtDay(b.date)], ['Pickup', b.pickup], ['Vehicle', b.vehicle], ['Guests', b.guests], ['Phone', b.phone]].forEach(function (p) {
       kv.appendChild(el('span', null, p[0])); kv.appendChild(el('span', null, p[1] || '-'));
     });
     card.appendChild(kv);
@@ -366,6 +375,46 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
     });
     if (!rows.length) { box.appendChild(el('div', 'empty', health.bookings && !health.bookings.ok ? 'Cannot read bookings: ' + health.bookings.msg : 'No bookings found. New requests from the website appear here instantly.')); return; }
     rows.forEach(function (b) { box.appendChild(bookingCard(b)); });
+  }
+
+  /* ---------- postpone / cancel requests ---------- */
+  function renderRequests() {
+    chips($('reqChips'), [{ v: 'new', t: 'To handle' }, { v: 'done', t: 'Done' }, { v: 'all', t: 'All' }], qf, function (v) { qf = v; renderRequests(); });
+    var box = $('reqList'); clear(box);
+    var rows = data.requests.filter(function (r) { return qf === 'all' || (r.status || 'new') === qf; });
+    if (!rows.length) { box.appendChild(el('div', 'empty', health.requests && !health.requests.ok ? 'Cannot read requests: ' + health.requests.msg : 'No requests here. Postpone and cancel requests from the website appear here.')); return; }
+    rows.forEach(function (r) {
+      var done = r.status === 'done', cancel = r.type === 'cancel', ph = tenDigits(r.phone);
+      var card = el('article', 'card'), h = el('div', 'h'), l = el('div');
+      l.appendChild(el('div', 'nm', cancel ? 'Cancel trip' : 'Postpone trip')); l.appendChild(el('div', 'd', 'Received ' + fmt(r.createdAt)));
+      h.appendChild(l); h.appendChild(el('span', 'badge ' + (done ? 'b-completed' : cancel ? 'b-cancelled' : 'b-pend'), done ? 'Done' : 'To handle')); card.appendChild(h);
+      var match = data.bookings.filter(function (b) { return tenDigits(b.phone) === ph && b.status !== 'cancelled'; })[0];
+      var kv = el('div', 'kv');
+      [['Mobile', '+91 ' + ph], ['New date', cancel ? '-' : fmtDay(r.newDate)], ['Reason', r.reason], ['Their booking', match ? (match.circuit || '') + ', ' + fmtDay(match.date) : 'Not found']].forEach(function (p) {
+        kv.appendChild(el('span', null, p[0])); kv.appendChild(el('span', null, p[1] || '-'));
+      });
+      card.appendChild(kv);
+      var a = el('div', 'acts');
+      a.appendChild(btn(done ? 'ghost' : '', done ? 'fa-solid fa-rotate-left' : 'fa-solid fa-check', done ? 'Reopen' : 'Mark done', function (b) {
+        b.disabled = true;
+        db.collection(COL.requests).doc(r.id).update({ status: done ? 'new' : 'done' }).then(function () { toast(done ? 'Reopened' : 'Marked done'); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); b.disabled = false; });
+      }));
+      if (match && !cancel && !done) a.appendChild(btn('ghost', 'fa-solid fa-calendar-day', 'Move booking', function (b) {
+        if (!r.newDate || !confirm('Change their booking date to ' + fmtDay(r.newDate) + '?')) return;
+        db.collection(COL.bookings).doc(match.id).update({ date: r.newDate }).then(function () { toast('Booking date updated'); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
+      }));
+      if (match && cancel && !done) a.appendChild(btn('ghost', 'fa-solid fa-ban', 'Cancel booking', function () {
+        if (confirm('Mark their booking as cancelled?')) db.collection(COL.bookings).doc(match.id).update({ status: 'cancelled' }).then(function () { toast('Booking cancelled'); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
+      }));
+      if (ph.length === 10) {
+        a.appendChild(link('wa', 'fa-brands fa-whatsapp', 'WhatsApp', 'https://wa.me/91' + ph + '?text=' + encodeURIComponent('Hello, this is Mountain Travels. We have received your ' + (cancel ? 'cancellation' : 'postpone') + ' request' + (cancel ? '' : ' for ' + fmtDay(r.newDate)) + '. It is now processed. Thank you!')));
+        a.appendChild(link('ghost', 'fa-solid fa-phone', 'Call', 'tel:+91' + ph));
+      }
+      a.appendChild(btn('danger', 'fa-solid fa-trash', 'Delete', function () {
+        if (confirm('Delete this request?')) db.collection(COL.requests).doc(r.id).delete().then(function () { toast('Request deleted'); }).catch(function (e) { toast('Failed: ' + (e.code || e.message)); });
+      }));
+      card.appendChild(a); box.appendChild(card);
+    });
   }
 
   /* ---------- reviews ---------- */
@@ -424,7 +473,7 @@ th{background:var(--tint);font-size:.7rem;color:var(--green);position:sticky;top
   /* ---------- settings: connection status ---------- */
   function renderConn() {
     var box = $('conn'); clear(box);
-    [['reviews', 'Reviews'], ['bookings', 'Bookings'], ['customers', 'Customers']].forEach(function (p) {
+    [['reviews', 'Reviews'], ['bookings', 'Bookings'], ['requests', 'Change requests'], ['customers', 'Customers']].forEach(function (p) {
       var h = health[p[0]], row = el('div', 'st'), l = el('span');
       var d = el('span', 'dot' + (h ? (h.ok ? ' ok' : ' bad') : '')); l.appendChild(d); l.appendChild(document.createTextNode(p[1] + ' (' + COL[p[0]] + ')'));
       row.appendChild(l); row.appendChild(el('span', null, !h ? 'Checking...' : h.ok ? h.n + ' records' : h.msg)); box.appendChild(row);
