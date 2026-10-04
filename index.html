@@ -1973,7 +1973,7 @@
         <i class="fa-brands fa-google google-g-icon"></i>
         <div>
           <div style="display:flex; align-items:center; gap:0.5rem;">
-            <span class="score-large">4.9</span>
+            <span class="score-large" id="reviewScore">4.9</span>
             <span style="font-size:0.85rem; color:var(--text-muted);">/ 5.0</span>
           </div>
           <div class="stars-group">
@@ -1984,7 +1984,7 @@
             <i class="fa-solid fa-star"></i>
           </div>
         </div>
-        <div style="font-size:0.8rem; color:var(--text-muted); border-left:1px solid var(--slate-200); padding-left:1rem;">
+        <div id="reviewSummaryText" style="font-size:0.8rem; color:var(--text-muted); border-left:1px solid var(--slate-200); padding-left:1rem;">
           Based on <strong>840+ genuine guest reviews</strong> on Google Business Profile
         </div>
       </div>
@@ -1998,8 +1998,8 @@
       </div>
     </div>
 
-    <div class="review-grid">
-      <article class="review-card">
+    <div class="review-grid" id="reviewGrid">
+      <article class="review-card" data-sample="true">
         <div>
           <div class="reviewer-header">
             <div class="reviewer-avatar">RK</div>
@@ -2021,7 +2021,7 @@
         </div>
       </article>
 
-      <article class="review-card">
+      <article class="review-card" data-sample="true">
         <div>
           <div class="reviewer-header">
             <div class="reviewer-avatar">SP</div>
@@ -2043,7 +2043,7 @@
         </div>
       </article>
 
-      <article class="review-card">
+      <article class="review-card" data-sample="true">
         <div>
           <div class="reviewer-header">
             <div class="reviewer-avatar">AM</div>
@@ -2542,22 +2542,28 @@
           <div class="review-char-count" id="reviewCount">0 / 500</div>
         </div>
 
+        <div aria-hidden="true" style="position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;">
+          <label for="reviewWebsite">Leave this field empty</label>
+          <input type="text" id="reviewWebsite" tabindex="-1" autocomplete="off" />
+        </div>
+
         <div class="form-error" id="reviewError" role="alert"></div>
 
         <button type="submit" class="btn-action btn-ride">
           <i class="fa-solid fa-paper-plane"></i> Submit Review
         </button>
         <p style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:0.7rem;">
-          Your review opens in WhatsApp, ready to send to our team.
+          Reviews appear on our website after approval by our team.
         </p>
       </form>
 
       <div id="reviewSuccess" style="display:none; text-align:center; padding:0.5rem 0;">
         <i class="fa-solid fa-circle-check" style="font-size:2.2rem; color:#1F7A3D;"></i>
         <h3 style="font-family: var(--font-heading); color: var(--forest-green); font-size:1.15rem; margin-top:0.5rem;">Thank You!</h3>
-        <p style="font-size:0.82rem; color:var(--text-muted); margin:0.4rem 0 1.2rem;">
-          Your review is ready in WhatsApp. Tap Send there to deliver it to our team.
-        </p>
+        <p id="reviewSuccessText" style="font-size:0.82rem; color:var(--text-muted); margin:0.4rem 0 1.2rem;"></p>
+        <a id="reviewWaLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-action btn-chat-wa" style="display:none; margin-bottom:0.6rem;">
+          <i class="fa-brands fa-whatsapp"></i> Send on WhatsApp
+        </a>
         <button type="button" class="btn-action btn-ride" onclick="closeReviewModal()">Close</button>
       </div>
     </div>
@@ -2590,6 +2596,7 @@
   <!-- FIREBASE SCRIPTS (Compat Libraries for Vanilla JS) -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
   <!-- APP SCRIPTS -->
   <script src="script.js"></script>
@@ -2713,26 +2720,57 @@
     })();
   </script>
 
-  <!-- CUSTOMER REVIEW FORM LOGIC -->
+  <!-- CUSTOMER REVIEW FORM LOGIC (saves to Firebase Firestore, shows approved reviews) -->
   <script>
     (function () {
       'use strict';
 
+      /* ---------- SETTINGS ---------- */
       var WA_NUMBER = '919360543120';
+      var COLLECTION = 'reviews';
+      var MAX_SHOWN = 6;          // newest approved reviews shown on the page
+      var SAMPLE_TARGET = 3;      // sample cards fade out as real reviews arrive
+      var COOLDOWN_MS = 60000;    // 1 review per minute per browser
+      var SAVE_TIMEOUT_MS = 12000;
+
+      /* Only needed if script.js does NOT call firebase.initializeApp() on page load.
+         Paste your Firebase web config object here, e.g.
+         { apiKey: '...', authDomain: '...', projectId: '...', appId: '...' } */
+      var REVIEW_FIREBASE_CONFIG = null;
+
       var RATING_LABELS = { 1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Very good', 5: 'Excellent' };
 
       var modal = document.getElementById('reviewModal');
       var form = document.getElementById('reviewForm');
       var success = document.getElementById('reviewSuccess');
+      var successText = document.getElementById('reviewSuccessText');
+      var waLink = document.getElementById('reviewWaLink');
       var errBox = document.getElementById('reviewError');
       var nameEl = document.getElementById('reviewName');
       var textEl = document.getElementById('reviewText');
       var countEl = document.getElementById('reviewCount');
       var ratingText = document.getElementById('starRatingText');
+      var honeypot = document.getElementById('reviewWebsite');
+      var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+      var submitHTML = submitBtn ? submitBtn.innerHTML : '';
       var opener = null;
 
       if (!modal || !form) return;
 
+      /* ---------- FIREBASE ---------- */
+      function getDb() {
+        try {
+          if (!window.firebase || !firebase.firestore) return null;
+          var apps = firebase.apps || [];
+          var existing = apps.filter(function (a) { return a.name === '[DEFAULT]'; })[0] ||
+                         apps.filter(function (a) { return a.name === 'reviews'; })[0];
+          if (existing) return existing.firestore();
+          if (REVIEW_FIREBASE_CONFIG) return firebase.initializeApp(REVIEW_FIREBASE_CONFIG, 'reviews').firestore();
+        } catch (err) { /* fall through */ }
+        return null;
+      }
+
+      /* ---------- SMALL HELPERS ---------- */
       function selectedRating() {
         var checked = form.querySelector('input[name="reviewStars"]:checked');
         return checked ? parseInt(checked.value, 10) : 0;
@@ -2743,15 +2781,51 @@
         errBox.style.display = msg ? 'block' : 'none';
       }
 
+      function setBusy(busy) {
+        submitBtn.disabled = busy;
+        submitBtn.innerHTML = busy ? '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...' : submitHTML;
+      }
+
       function resetForm() {
         form.reset();
         showError('');
+        setBusy(false);
         countEl.textContent = '0 / 500';
         ratingText.textContent = 'Tap a star to rate';
+        waLink.style.display = 'none';
         form.style.display = '';
         success.style.display = 'none';
       }
 
+      function lastSent() {
+        try { return parseInt(localStorage.getItem('mt_review_ts') || '0', 10); } catch (e) { return 0; }
+      }
+      function markSent() {
+        try { localStorage.setItem('mt_review_ts', String(Date.now())); } catch (e) { /* ignore */ }
+      }
+
+      function showSaved() {
+        successText.textContent = 'Your review has been submitted. It will appear on our website once our team approves it.';
+        waLink.style.display = 'none';
+        form.style.display = 'none';
+        success.style.display = 'block';
+      }
+
+      /* If the online save fails, nothing is lost: the customer can send it on WhatsApp instead */
+      function showWhatsAppFallback(rating, name, text) {
+        var stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating);
+        var message = 'Hello Mountain Travels, I would like to share my review.\n\n' +
+                      'Rating: ' + rating + '/5 ' + stars + '\n' +
+                      'Name: ' + name + '\n' +
+                      'Review: ' + text;
+        waLink.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(message);
+        waLink.style.display = 'inline-flex';
+        successText.textContent = 'We could not save your review online right now. Tap below to send it to our team on WhatsApp.';
+        form.style.display = 'none';
+        success.style.display = 'block';
+      }
+
+      /* ---------- MODAL OPEN / CLOSE ---------- */
       window.openReviewModal = function () {
         opener = document.activeElement;
         resetForm();
@@ -2764,12 +2838,10 @@
         if (opener && typeof opener.focus === 'function') opener.focus();
       };
 
-      /* click outside the card closes the modal */
       modal.addEventListener('click', function (e) {
         if (e.target === modal) window.closeReviewModal();
       });
 
-      /* live rating text + character counter */
       form.addEventListener('change', function (e) {
         if (e.target && e.target.name === 'reviewStars') {
           var r = selectedRating();
@@ -2782,7 +2854,7 @@
         countEl.textContent = textEl.value.length + ' / 500';
       });
 
-      /* validate, then hand the review to the business on WhatsApp */
+      /* ---------- SUBMIT: validate, save to Firestore ---------- */
       form.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -2793,22 +2865,157 @@
         if (!rating) { showError('Please choose a star rating.'); return; }
         if (!name) { showError('Please enter your name.'); nameEl.focus(); return; }
         if (text.length < 10) { showError('Please write at least 10 characters about your trip.'); textEl.focus(); return; }
+        if (Date.now() - lastSent() < COOLDOWN_MS) { showError('Please wait a minute before sending another review.'); return; }
 
         showError('');
 
-        var stars = '\u2605'.repeat(rating) + '\u2606'.repeat(5 - rating);
-        var message = 'Hello Mountain Travels, I would like to share my review.\n\n' +
-                      'Rating: ' + rating + '/5 ' + stars + '\n' +
-                      'Name: ' + name + '\n' +
-                      'Review: ' + text;
-        var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(message);
+        /* bots fill the hidden field: pretend success, save nothing */
+        if (honeypot && honeypot.value) { showSaved(); return; }
 
-        var w = window.open(url, '_blank');
-        if (w) { w.opener = null; } else { window.location.href = url; }
+        var db = getDb();
+        if (!db) { showWhatsAppFallback(rating, name, text); return; }
 
-        form.style.display = 'none';
-        success.style.display = 'block';
+        setBusy(true);
+        var finished = false;
+
+        var timer = setTimeout(function () {
+          if (finished) return;
+          finished = true;
+          showWhatsAppFallback(rating, name, text);
+        }, SAVE_TIMEOUT_MS);
+
+        db.collection(COLLECTION).add({
+          name: name,
+          rating: rating,
+          text: text,
+          approved: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(function () {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          markSent();
+          showSaved();
+        }).catch(function () {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          showWhatsAppFallback(rating, name, text);
+        });
       });
+
+      /* ---------- SHOW APPROVED REVIEWS ON THE PAGE ---------- */
+      function el(tag, cls, text) {
+        var node = document.createElement(tag);
+        if (cls) node.className = cls;
+        if (text !== undefined && text !== null) node.textContent = text;
+        return node;
+      }
+
+      function initials(name) {
+        var parts = name.trim().split(/\s+/);
+        var out = parts[0].charAt(0) + (parts.length > 1 ? parts[1].charAt(0) : '');
+        return out.toUpperCase() || '?';
+      }
+
+      function buildCard(r) {
+        var card = el('article', 'review-card');
+        card.setAttribute('data-live', 'true');
+
+        var top = el('div');
+        var head = el('div', 'reviewer-header');
+        head.appendChild(el('div', 'reviewer-avatar', initials(r.name)));
+        var meta = el('div', 'reviewer-meta');
+        meta.appendChild(el('h4', null, r.name));
+        meta.appendChild(el('span', null, r.date
+          ? r.date.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
+          : 'Customer review'));
+        head.appendChild(meta);
+        top.appendChild(head);
+
+        var stars = el('div', 'stars-group');
+        stars.style.marginBottom = '0.5rem';
+        stars.style.fontSize = '0.8rem';
+        stars.setAttribute('role', 'img');
+        stars.setAttribute('aria-label', r.rating + ' out of 5 stars');
+        for (var i = 1; i <= 5; i++) {
+          var star = document.createElement('i');
+          star.className = (i <= r.rating ? 'fa-solid' : 'fa-regular') + ' fa-star';
+          star.setAttribute('aria-hidden', 'true');
+          stars.appendChild(star);
+        }
+        top.appendChild(stars);
+        top.appendChild(el('p', 'review-text', '"' + r.text + '"'));
+        card.appendChild(top);
+
+        var foot = el('div', 'review-footer');
+        foot.appendChild(el('span', null, 'Customer Review'));
+        foot.appendChild(el('span', null, r.rating + ' / 5'));
+        card.appendChild(foot);
+
+        return card;
+      }
+
+      function renderReviews(items) {
+        var grid = document.getElementById('reviewGrid');
+        if (!grid) return;
+
+        Array.prototype.slice.call(grid.querySelectorAll('[data-live]')).forEach(function (n) { n.remove(); });
+
+        var shown = items.slice(0, MAX_SHOWN);
+        shown.forEach(function (r) {
+          grid.insertBefore(buildCard(r), grid.querySelector('[data-sample]'));
+        });
+
+        /* sample cards step aside as real reviews come in */
+        var samples = grid.querySelectorAll('[data-sample]');
+        var keep = Math.max(0, SAMPLE_TARGET - shown.length);
+        for (var i = samples.length - 1; i >= keep; i--) samples[i].remove();
+
+        /* real average + count once there are enough reviews */
+        if (items.length >= 3) {
+          var total = items.reduce(function (sum, r) { return sum + r.rating; }, 0);
+          var score = document.getElementById('reviewScore');
+          if (score) score.textContent = (total / items.length).toFixed(1);
+
+          var summary = document.getElementById('reviewSummaryText');
+          if (summary) {
+            summary.textContent = '';
+            summary.appendChild(document.createTextNode('Based on '));
+            summary.appendChild(el('strong', null, items.length + (items.length >= 100 ? '+' : '') + ' guest reviews'));
+            summary.appendChild(document.createTextNode(' from our website'));
+          }
+        }
+      }
+
+      function loadReviews() {
+        var db = getDb();
+        if (!db) return;
+
+        db.collection(COLLECTION).where('approved', '==', true).limit(100).get().then(function (snap) {
+          var items = [];
+          snap.forEach(function (doc) {
+            var d = doc.data();
+            if (typeof d.rating === 'number' && d.rating >= 1 && d.rating <= 5 && d.name && d.text) {
+              items.push({
+                name: String(d.name),
+                rating: Math.round(d.rating),
+                text: String(d.text),
+                date: d.createdAt && typeof d.createdAt.toDate === 'function' ? d.createdAt.toDate() : null
+              });
+            }
+          });
+          if (!items.length) return;
+          items.sort(function (a, b) {
+            return (b.date ? b.date.getTime() : 0) - (a.date ? a.date.getTime() : 0);
+          });
+          renderReviews(items);
+        }).catch(function () { /* keep the sample cards if loading fails */ });
+      }
+
+      /* wait for 'load' so script.js has finished initialising Firebase */
+      if (document.readyState === 'complete') loadReviews();
+      else window.addEventListener('load', loadReviews);
     })();
   </script>
 </body>
