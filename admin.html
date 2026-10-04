@@ -35,8 +35,10 @@ button{font-family:inherit;cursor:pointer}
 .btn.danger{background:#fff;color:var(--red);border:1px solid #fecaca}
 .btn.danger:hover{background:#fef2f2}
 .btn:disabled{opacity:.6;cursor:wait}
-.logo-box{background:var(--dark);border-radius:12px;padding:.6rem;display:flex;justify-content:center;margin-bottom:.9rem}
-.logo-img{height:64px;width:auto;max-width:100%;object-fit:contain;mix-blend-mode:screen}
+.logo-box{background:transparent;padding:.2rem;display:flex;justify-content:center;margin-bottom:.9rem}
+.logo-img{height:64px;width:auto;max-width:100%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.logo-img.raw{mix-blend-mode:screen;filter:none}
+.login-card .logo-img.raw{mix-blend-mode:normal}
 .side .brand{padding:.1rem .4rem 1rem}
 .side .logo-img{height:48px}
 .msg{display:none;font-size:.78rem;font-weight:600;padding:.5rem .7rem;border-radius:6px;margin-bottom:.85rem;color:var(--red);background:#fef2f2;border:1px solid #fecaca}
@@ -195,10 +197,13 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
   /* ===== SETTINGS ===== */
   // 1) Paste the SAME Firebase web config that is inside your script.js
   var FIREBASE_CONFIG = {
-    apiKey: 'PASTE_API_KEY',
-    authDomain: 'PASTE_PROJECT.firebaseapp.com',
-    projectId: 'PASTE_PROJECT_ID',
-    appId: 'PASTE_APP_ID'
+    apiKey: 'AIzaSyCAuq3dYZnYLlnYd8j-FjyA0AP_EhZ7Ld8',
+    authDomain: 'mountaintravels-74489.firebaseapp.com',
+    projectId: 'mountaintravels-74489',
+    storageBucket: 'mountaintravels-74489.firebasestorage.app',
+    messagingSenderId: '524468956734',
+    appId: '1:524468956734:web:9e089d3cc950aa85cdab6f',
+    measurementId: 'G-RY421HFCNG'
   };
   // 2) Only these mobile numbers can use the admin (also enforce this in Firestore rules)
   var ADMIN_PHONES = ['9360543120'];
@@ -414,6 +419,49 @@ th{background:var(--tint);font-size:.72rem;text-transform:uppercase;color:var(--
   }
   $('csvBookings').addEventListener('click', function () { exportCsv(bookings, 'bookings'); });
   $('csvCustomers').addEventListener('click', function () { exportCsv(customers, 'customers'); });
+})();
+</script>
+
+<script>
+/* Removes the black background around Mountain.png (edge flood-fill, keeps dark details inside the logo) */
+(function () {
+  var imgs = Array.prototype.slice.call(document.querySelectorAll('.logo-img'));
+  if (!imgs.length) return;
+  var src = imgs[0].getAttribute('src');
+  var probe = new Image();
+  probe.onload = function () {
+    try {
+      var w = probe.naturalWidth, h = probe.naturalHeight;
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var x = c.getContext('2d'); x.drawImage(probe, 0, 0);
+      var d = x.getImageData(0, 0, w, h), px = d.data;
+      var LIM = 70, seen = new Uint8Array(w * h), stack = [];
+      function bg(i) { return px[i * 4 + 3] < 20 || Math.max(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]) < LIM; }
+      function push(i) { if (!seen[i] && bg(i)) { seen[i] = 1; stack.push(i); } }
+      for (var a = 0; a < w; a++) { push(a); push((h - 1) * w + a); }
+      for (var b = 0; b < h; b++) { push(b * w); push(b * w + w - 1); }
+      while (stack.length) {
+        var i = stack.pop(), cx = i % w, cy = (i / w) | 0;
+        if (cx > 0) push(i - 1); if (cx < w - 1) push(i + 1);
+        if (cy > 0) push(i - w); if (cy < h - 1) push(i + w);
+      }
+      for (var k = 0; k < seen.length; k++) {
+        if (seen[k]) px[k * 4 + 3] = 0;
+      }
+      /* soften the 1px edge so there is no dark halo */
+      for (var y = 1; y < h - 1; y++) for (var z = 1; z < w - 1; z++) {
+        var j = y * w + z;
+        if (!seen[j] && (seen[j - 1] || seen[j + 1] || seen[j - w] || seen[j + w]) && Math.max(px[j * 4], px[j * 4 + 1], px[j * 4 + 2]) < 110) px[j * 4 + 3] = 90;
+      }
+      x.putImageData(d, 0, 0);
+      var url = c.toDataURL('image/png');
+      imgs.forEach(function (im) { im.src = url; });
+    } catch (e) {
+      imgs.forEach(function (im) { im.classList.add('raw'); }); /* e.g. opened as a local file */
+    }
+  };
+  probe.onerror = function () {};
+  probe.src = src;
 })();
 </script>
 </body>
